@@ -151,7 +151,7 @@ public class EmitterContext
     {
         return new Operand(ConstantType.UInt32)
         {
-            UConst32 = value
+            UConst32 = value,
         };
     }
     
@@ -159,7 +159,7 @@ public class EmitterContext
     {
         return new Operand(ConstantType.Int32)
         {
-            UConst32 = (UInt32) value
+            UConst32 = (UInt32) value,
         };
     }
 

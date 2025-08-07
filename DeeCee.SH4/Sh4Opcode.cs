@@ -22,7 +22,7 @@ public struct Sh4Opcode
     public byte M() => (byte)((value >> 4) & 0xF);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Int32 SImm32() => (byte)(value & 0xFF);
+    public Int32 SImm32() => (sbyte)(value & 0xFF);
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte Imm8() => (byte)(value & 0xFF);

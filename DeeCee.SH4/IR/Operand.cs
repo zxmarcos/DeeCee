@@ -59,7 +59,8 @@ public class Operand
 
             OperandKind.Constant => ConstantType switch
             {
-                ConstantType.Int32 => $"#{UConst32}",
+                ConstantType.UInt32 => $"#{UConst32}",
+                ConstantType.Int32 => $"#{(int)UConst32}",
                 ConstantType.Float => $"#{ConstFloat}f",
                 ConstantType.Double => $"#{ConstDouble}d",
                 _ => $"Const({ConstantType})"

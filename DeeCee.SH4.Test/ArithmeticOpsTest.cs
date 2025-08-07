@@ -14,7 +14,7 @@ public unsafe class Tests
     public void TestADD()
     {
         Sh4FrontEnd fe = new();
-        fe.Compile(Sh4Assembler.ADD(1, (byte)2));
+        fe.Compile(Sh4Assembler.ADD(1, 2));
 
         fixed (Sh4CpuState* statePtr = &_state)
         {
@@ -89,6 +89,24 @@ public unsafe class Tests
             interpreter.Execute(cpu.Context.Block);
             Assert.That(_state.R[1], Is.EqualTo(0x80000000));
             Assert.That(_state.T, Is.EqualTo(true));
+        }
+    }
+    
+    [Test]
+    public void TestADDI()
+    {
+        Sh4FrontEnd fe = new();
+        fe.Compile(Sh4Assembler.ADDI(1, -4));
+
+        fixed (Sh4CpuState* statePtr = &_state)
+        {
+            Sh4Interpreter interpreter = new(statePtr);
+
+            Console.WriteLine(fe.Context.Block);
+            _state.R[1] = 5;
+            _state.SR = 0;
+            interpreter.Execute(fe.Context.Block);
+            Assert.That(_state.R[1], Is.EqualTo(1));
         }
     }
 }
