@@ -74,6 +74,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(0))
         {
+            // SUB Rm,Rn
+            case 0b1000: ArithmeticOps.Sub(Context); return;
             // ADD Rm,Rn
             case 0b1100: ArithmeticOps.Add(Context); return;
             // ADDC Rm,Rn

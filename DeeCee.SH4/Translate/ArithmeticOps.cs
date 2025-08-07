@@ -72,4 +72,13 @@ public static class ArithmeticOps
             ir.If(ir.CompareEqual(ans, ir.Constant(1)), ir.SetT, ir.ClearT);
         }, ir.ClearT);
     }
+
+    public static void Sub(Sh4EmitterContext context)
+    {
+        var mReg = context.GetReg(context.Op.M());
+        var nReg = context.GetReg(context.Op.N());
+        
+        var result = context.Sub(nReg, mReg);
+        context.SetReg(context.Op.N(), result);
+    }
 }

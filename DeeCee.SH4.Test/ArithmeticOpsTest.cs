@@ -109,4 +109,23 @@ public unsafe class Tests
             Assert.That(_state.R[1], Is.EqualTo(1));
         }
     }
+    
+    [Test]
+    public void TestSUB()
+    {
+        Sh4FrontEnd fe = new();
+        fe.Compile(Sh4Assembler.SUB(1, 2));
+
+        fixed (Sh4CpuState* statePtr = &_state)
+        {
+            Sh4Interpreter interpreter = new(statePtr);
+
+            Console.WriteLine(fe.Context.Block);
+            _state.R[1] = 1;
+            _state.R[2] = 50;
+            _state.SR = 0;
+            interpreter.Execute(fe.Context.Block);
+            Assert.That(_state.R[2], Is.EqualTo(49));
+        }
+    }
 }

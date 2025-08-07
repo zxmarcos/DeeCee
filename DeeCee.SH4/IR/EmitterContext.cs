@@ -21,6 +21,13 @@ public class EmitterContext
         Block.Add(new Instruction(a, b, result, Opcode.ADD));
         return result;
     }
+    
+    public Operand Sub(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.SUB));
+        return result;
+    }
 
     public Operand And(Operand a, Operand b)
     {

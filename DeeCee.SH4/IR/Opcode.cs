@@ -4,6 +4,7 @@ public enum Opcode
 {
     COPY,
     ADD,
+    SUB,
     STORE,
     LOAD,
     AND,

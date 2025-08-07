@@ -84,6 +84,13 @@ public unsafe class Sh4Interpreter
                     SetValue(instruction.Destiny, a + b);
                     break;
                 }
+                case Opcode.SUB:
+                {
+                    var a = GetValue(instruction.A);
+                    var b = GetValue(instruction.B);
+                    SetValue(instruction.Destiny, a - b);
+                    break;
+                }
                 case Opcode.STORE:
                 {
                     Debug.Assert(instruction.Destiny != null, "instruction.Destiny != null");
