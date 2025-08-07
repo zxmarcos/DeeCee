@@ -78,6 +78,13 @@ public class EmitterContext
         return result;
     }
     
+    public Operand CompareGreaterSigned(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.CMP_GT_SIGN));
+        return result;
+    }
+    
     public Operand CompareGreaterOrEqual(Operand a, Operand b)
     {
         var result = AllocateLocal();

@@ -32,6 +32,7 @@ public class Instruction
             Opcode.NOT          => $"{dst} <- ~{opA}",
             Opcode.CMP_LT       => $"cmp_lt {opA}, {opB} -> {dst} ",
             Opcode.CMP_GT       => $"cmp_gt {opA}, {opB} -> {dst}",
+            Opcode.CMP_GT_SIGN  => $"cmp_gt_sign {opA}, {opB} -> {dst}",
             Opcode.CMP_GE       => $"cmp_ge {opA}, {opB} -> {dst}",
             Opcode.CMP_GE_SIGN  => $"cmp_ge_sign {opA}, {opB} -> {dst}",
             Opcode.CMP_EQ       => $"cmp_eq {opA}, {opB} -> {dst}",
