@@ -128,4 +128,36 @@ public unsafe class Tests
             Assert.That(_state.R[2], Is.EqualTo(49));
         }
     }
+    
+    [Test]
+    public void TestSUBC()
+    {
+        
+        Sh4FrontEnd cpu = new();
+
+        fixed (Sh4CpuState* statePtr = &_state)
+        {
+            Sh4Interpreter interpreter = new(statePtr);
+            
+            cpu.Compile(Sh4Assembler.SUBC(3, 1));
+            
+            Console.WriteLine(cpu.Context.Block);
+            _state.R[1] = 0;
+            _state.R[3] = 1;
+            _state.SR = 0;
+            interpreter.Execute(cpu.Context.Block);
+            Assert.That(_state.R[1], Is.EqualTo(0xFFFFFFFF));
+            Assert.That(_state.T, Is.EqualTo(true));
+            
+            cpu.Context.Block.Clear();
+            cpu.Compile(Sh4Assembler.SUBC(2, 0));
+            Console.WriteLine(cpu.Context.Block);
+            _state.R[0] = 0;
+            _state.R[2] = 0;
+            _state.SR = 1;
+            interpreter.Execute(cpu.Context.Block);
+            Assert.That(_state.R[0], Is.EqualTo(0xFFFFFFFF));
+            Assert.That(_state.T, Is.EqualTo(true));
+        }
+    }
 }

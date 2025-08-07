@@ -81,4 +81,24 @@ public static class ArithmeticOps
         var result = context.Sub(nReg, mReg);
         context.SetReg(context.Op.N(), result);
     }
+    
+    public static void SubC(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        var nReg = ir.GetReg(ir.Op.N());
+        
+        // tmp0 = R[n]
+        var tmp0 = ir.AllocateLocal();
+        ir.Copy(nReg, tmp0);
+        
+        // tmp1 = R[n] - R[m] - T
+        var tmp1 = ir.Sub(nReg, mReg);
+        var result = ir.Sub(tmp1, ir.GetT());
+        ir.SetReg(ir.Op.N(), result);
+
+        ir.If(ir.CompareLesser(tmp0, tmp1),
+            ir.SetT,
+            ir.ClearT);
+        ir.If(ir.CompareLesser(tmp1, result), ir.SetT);
+    }
 }
