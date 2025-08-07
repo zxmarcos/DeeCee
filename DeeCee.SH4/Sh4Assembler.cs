@@ -65,7 +65,7 @@ public class Sh4Assembler
     public static UInt16 NEGC(byte m, byte n) => RegFormat(0b0110, n, m, 0b1010);
 
     // Compare instructions
-    public static UInt16 CMPEQI(sbyte imm) => ImmFormat(0b10001000, 0, (byte)imm);
+    public static UInt16 CMPEQI(sbyte imm) => ImmFormat(0b1000, 0b1000, (byte)imm);
     public static UInt16 CMPEQ(byte m, byte n) => RegFormat(0b0011, n, m, 0b0000);
     public static UInt16 CMPHS(byte m, byte n) => RegFormat(0b0011, n, m, 0b0010);
     public static UInt16 CMPGE(byte m, byte n) => RegFormat(0b0011, n, m, 0b0011);

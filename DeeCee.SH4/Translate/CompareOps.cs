@@ -51,14 +51,14 @@ public static class CompareOps
     {
         var nReg = ir.GetReg(ir.Op.N());
         
-        ir.If(ir.CompareGreater(nReg, ir.Constant(0)), ir.SetT, ir.ClearT);
+        ir.If(ir.CompareGreaterSigned(nReg, ir.Constant(0)), ir.SetT, ir.ClearT);
     }
     
     public static void CmpPz(Sh4EmitterContext ir)
     {
         var nReg = ir.GetReg(ir.Op.N());
         
-        ir.If(ir.CompareGreaterOrEqual(nReg, ir.Constant(0)), ir.SetT, ir.ClearT);
+        ir.If(ir.CompareGreaterOrEqualSigned(nReg, ir.Constant(0)), ir.SetT, ir.ClearT);
     }
     
     public static void CmpStr(Sh4EmitterContext ir)

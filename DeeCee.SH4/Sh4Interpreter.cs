@@ -236,6 +236,13 @@ public unsafe class Sh4Interpreter
                     SetValue(instruction.Destiny, a > b ? 1U : 0U);
                     break;
                 }
+                case Opcode.CMP_GT_SIGN:
+                {
+                    var a = GetValue(instruction.A);
+                    var b = GetValue(instruction.B);
+                    SetValue(instruction.Destiny, (Int32)a > (Int32)b ? 1U : 0U);
+                    break;
+                }
                 case Opcode.CMP_GE:
                 {
                     var a = GetValue(instruction.A);
