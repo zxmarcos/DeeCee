@@ -101,4 +101,37 @@ public static class ArithmeticOps
             ir.ClearT);
         ir.If(ir.CompareLesser(tmp1, result), ir.SetT);
     }
+    
+    public static void SubV(Sh4EmitterContext ir)
+    {
+        var dest = ir.AllocateLocal();
+        var src = ir.AllocateLocal();
+        var ans = ir.AllocateLocal();
+
+        var n = ir.Op.N();
+        var m = ir.Op.M();
+        var zero = ir.Constant(0);
+        
+        ir.If(ir.CompareGreaterOrEqualSigned(ir.GetReg(n), zero), () => ir.SetZero(dest),
+            () => ir.SetOne(dest));
+        
+        ir.If(ir.CompareGreaterOrEqualSigned(ir.GetReg(m), zero), () => ir.SetZero(src),
+            () => ir.SetOne(src));
+
+        src = ir.Add(src, dest);
+        // R[n] -= R[m]
+        ir.SetReg(n, ir.Sub(ir.GetReg(n), ir.GetReg(m)));
+        
+        ir.If(ir.CompareGreaterOrEqualSigned(ir.GetReg(n), zero), () => ir.SetZero(ans),
+            () => ir.SetOne(ans));
+        
+        // ans += dest
+        ans = ir.Add(ans, dest);
+        // if (src == 1)
+        ir.If(ir.CompareEqual(src, ir.Constant(1)), () =>
+        {
+            // if (ans == 1) T = 1; else T = 0
+            ir.If(ir.CompareEqual(ans, ir.Constant(1)), ir.SetT, ir.ClearT);
+        }, ir.ClearT);
+    }
 }

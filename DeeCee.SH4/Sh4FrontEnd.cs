@@ -84,6 +84,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b1000: ArithmeticOps.Sub(Context); return;
             // SUBC Rm,Rn
             case 0b1010: ArithmeticOps.SubC(Context); return;
+            // SUBV Rm,Rn
+            case 0b1011: ArithmeticOps.SubV(Context); return;
         }
     }
 
