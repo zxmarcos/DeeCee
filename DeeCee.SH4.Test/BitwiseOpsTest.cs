@@ -70,7 +70,7 @@ public unsafe class BitwiseOpsTest
             _state.R[0] = 0;
             _state.GBR = 0x0;
             interpreter.Execute(fe.Context.Block);
-            Assert.That(_memory.Read32(0x0), Is.EqualTo(a & b));
+            Assert.That(_memory.Read8(0x0), Is.EqualTo(a & b));
         }
     }
     
@@ -133,7 +133,7 @@ public unsafe class BitwiseOpsTest
             _state.R[0] = 0;
             _state.GBR = 0x0;
             interpreter.Execute(fe.Context.Block);
-            Assert.That(_memory.Read32(0x0), Is.EqualTo(a | b));
+            Assert.That(_memory.Read8(0x0), Is.EqualTo((a | b) & 0xFF));
         }
     }
     
@@ -195,7 +195,7 @@ public unsafe class BitwiseOpsTest
             _state.R[0] = 0;
             _state.GBR = 0x0;
             interpreter.Execute(fe.Context.Block);
-            Assert.That(_memory.Read32(0x0), Is.EqualTo(a ^ b));
+            Assert.That(_memory.Read8(0x0), Is.EqualTo((a ^ b) & 0xFF));
         }
     }
     
@@ -217,4 +217,71 @@ public unsafe class BitwiseOpsTest
             Assert.That(_state.R[0], Is.EqualTo(~12U));
         }
     }
+    
+    [Test]
+    public void TestTST()
+    {
+        Sh4FrontEnd fe = new();
+        
+        
+        fixed (Sh4CpuState* statePtr = &_state)
+        {
+            Sh4Interpreter interpreter = new(statePtr);
+            
+            fe.Compile(Sh4Assembler.TST(0, 0));
+            Console.WriteLine(fe.Context.Block);
+            _state.R[0] = 0;
+            _state.SR = 0;
+            interpreter.Execute(fe.Context.Block);
+            Assert.That(_state.T, Is.EqualTo(true));
+            
+            fe.Context.Block.Clear();
+            fe.Compile(Sh4Assembler.TST(0, 0));
+            Console.WriteLine(fe.Context.Block);
+            _state.R[0] = 1;
+            _state.SR = 0;
+            interpreter.Execute(fe.Context.Block);
+            Assert.That(_state.T, Is.EqualTo(false));
+        }
+    }
+    
+    [Test]
+    public void TestTSTI()
+    {
+        Sh4FrontEnd fe = new();
+        fe.Compile(Sh4Assembler.TSTI((sbyte)-128u));
+
+        fixed (Sh4CpuState* statePtr = &_state)
+        {
+            Sh4Interpreter interpreter = new(statePtr);
+
+            Console.WriteLine(fe.Context.Block);
+            _state.R[0] = 0xFFFFFF7F;
+            _state.SR = 0;
+            interpreter.Execute(fe.Context.Block);
+            Assert.That(_state.T, Is.EqualTo(true));
+        }
+    }
+    
+    [Test]
+    public void TestTSTB()
+    {
+        Sh4FrontEnd fe = new();
+        fe.Compile(Sh4Assembler.TSTB(0xA5));
+
+        fixed (Sh4CpuState* statePtr = &_state)
+        {
+            Sh4Interpreter interpreter = new(statePtr);
+            interpreter.Memory = _memory;
+            
+            _memory.Write8(0x0, 0xA5);
+
+            Console.WriteLine(fe.Context.Block);
+            _state.GBR = 0x0;
+            interpreter.Execute(fe.Context.Block);
+            Assert.That(_state.T, Is.EqualTo(false));
+        }
+    }
+    
+    
 }

@@ -19,7 +19,7 @@ public static class BitwiseOps
 
     public static void AndB(Sh4EmitterContext ir)
     {
-        var ea = ir.Memory(ir.Add(ir.GetGBR(), ir.GetReg(0)), MemoryWidth.Dword);
+        var ea = ir.Memory(ir.Add(ir.GetGBR(), ir.GetReg(0)), MemoryWidth.Byte);
         var data = ir.Load(ea);
         var result = ir.And(data, ir.Constant((UInt32) ir.Op.Imm8()));
         ir.Store(ea, result);
@@ -42,7 +42,7 @@ public static class BitwiseOps
     
     public static void OrB(Sh4EmitterContext ir)
     {
-        var ea = ir.Memory(ir.Add(ir.GetGBR(), ir.GetReg(0)));
+        var ea = ir.Memory(ir.Add(ir.GetGBR(), ir.GetReg(0)), MemoryWidth.Byte);
         var data = ir.Load(ea);
         var result = ir.Or(data, ir.Constant((UInt32) ir.Op.Imm8()));
         ir.Store(ea, result);
@@ -65,7 +65,7 @@ public static class BitwiseOps
     
     public static void XorB(Sh4EmitterContext ir)
     {
-        var ea = ir.Memory(ir.Add(ir.GetGBR(), ir.GetReg(0)));
+        var ea = ir.Memory(ir.Add(ir.GetGBR(), ir.GetReg(0)), MemoryWidth.Byte);
         var data = ir.Load(ea);
         var result = ir.Xor(data, ir.Constant((UInt32) ir.Op.Imm8()));
         ir.Store(ea, result);
@@ -75,5 +75,28 @@ public static class BitwiseOps
     {
         var mReg = context.GetReg(context.Op.M());
         context.SetReg(context.Op.N(), context.Not(mReg));
+    }
+    
+    public static void Tst(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        var nReg = ir.GetReg(ir.Op.N());
+        
+        var result = ir.And(mReg, nReg);
+        ir.If(ir.CompareEqual(result, ir.Constant(0)), ir.SetT, ir.ClearT);;
+    }
+    
+    public static void TstI(Sh4EmitterContext ir)
+    {
+        var result = ir.And(ir.GetReg(0), ir.Constant((UInt32)ir.Op.Imm8()));
+        ir.If(ir.CompareEqual(result, ir.Constant(0)), ir.SetT, ir.ClearT);;
+    }
+    
+    public static void TstB(Sh4EmitterContext ir)
+    {
+        var ea = ir.Memory(ir.Add(ir.GetGBR(), ir.GetReg(0)), MemoryWidth.Byte);
+        var data = ir.Load(ea);
+        var result = ir.And(data, ir.Constant((UInt32)ir.Op.Imm8()));
+        ir.If(ir.CompareEqual(result, ir.Constant(0)), ir.SetT, ir.ClearT);;
     }
 }

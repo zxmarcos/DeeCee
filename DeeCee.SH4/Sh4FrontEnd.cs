@@ -67,6 +67,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 return;
             case 0b1010: BitwiseOps.Xor(Context);
                 return;
+            case 0b1000: BitwiseOps.Tst(Context);
+                return;
         }
     }
 
@@ -128,6 +130,11 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b1010: BitwiseOps.XorI(Context);
                 return;
             case 0b1110: BitwiseOps.XorB(Context);
+                return;
+            
+            case 0b1000: BitwiseOps.TstI(Context);
+                return;
+            case 0b1100: BitwiseOps.TstB(Context);
                 return;
         }
     }
