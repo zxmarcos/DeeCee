@@ -61,13 +61,20 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(0))
         {
+            // AND Rm,Rn
             case 0b1001: BitwiseOps.And(Context);
                 return;
+            // OR Rm,Rn
             case 0b1011: BitwiseOps.Or(Context);
                 return;
+            // XOR Rm,Rn
             case 0b1010: BitwiseOps.Xor(Context);
                 return;
+            // TST Rm,Rn
             case 0b1000: BitwiseOps.Tst(Context);
+                return;
+            // CMP/STR Rm,Rn
+            case 0b1100: CompareOps.CmpStr(Context);
                 return;
         }
     }
@@ -76,6 +83,17 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(0))
         {
+            // CMP/EQ Rm,Rn
+            case 0b0000: CompareOps.CmpEq(Context); return;
+            // CMP/GE Rm,Rn
+            case 0b0011: CompareOps.CmpGe(Context); return;
+            // CMP/GT Rm,Rn
+            case 0b0111: CompareOps.CmpGt(Context); return;
+            // CMP/HI Rm,Rn
+            case 0b0110: CompareOps.CmpHi(Context); return;
+            // CMP/HS Rm,Rn
+            case 0b0010: CompareOps.CmpHs(Context); return;
+            
             // ADD Rm,Rn
             case 0b1100: ArithmeticOps.Add(Context); return;
             // ADDC Rm,Rn
@@ -91,7 +109,19 @@ public class Sh4FrontEnd : Sh4BaseCpu
         }
     }
 
-    private void Op0100() { }
+    private void Op0100()
+    {
+        var lopart16 = Context.Op.Value & 0xFFFF;
+        switch (lopart16)
+        {
+            // CMP/PL Rn
+            case 0b00010101: CompareOps.CmpPl(Context);
+                return;
+            // CMP/PLZRn
+            case 0b00010001: CompareOps.CmpPl(Context);
+                return;
+        }
+    }
     private void Op0101() { }
 
     private void Op0110()
@@ -108,7 +138,14 @@ public class Sh4FrontEnd : Sh4BaseCpu
         ArithmeticOps.AddI(Context);
     }
 
-    private void Op1000() { }
+    private void Op1000()
+    {
+        switch (Context.Op.Part(2))
+        {
+            // CMP/EQ #imm,R0
+            case 0b1000: CompareOps.CmpEqI(Context); return;
+        }
+    }
     private void Op1001() { }
     private void Op1010() { }
     private void Op1011() { }
@@ -117,23 +154,29 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(2))
         {
+            // AND #imm,R0
             case 0b1001: BitwiseOps.AndI(Context);
                 return;
+            // AND #imm,(R0+GBR)
             case 0b1101: BitwiseOps.AndB(Context);
                 return;
             
+            // OR #imm,R0
             case 0b1011: BitwiseOps.OrI(Context);
                 return;
+            // OR #imm,(R0+GBR)
             case 0b1111: BitwiseOps.OrB(Context);
                 return;
-            
+            // XOR #imm,R0
             case 0b1010: BitwiseOps.XorI(Context);
                 return;
+            // XOR #imm,(R0+GBR)
             case 0b1110: BitwiseOps.XorB(Context);
                 return;
-            
+            // TST #imm,R0
             case 0b1000: BitwiseOps.TstI(Context);
                 return;
+            // TST #imm,(R0+GBR)
             case 0b1100: BitwiseOps.TstB(Context);
                 return;
         }
