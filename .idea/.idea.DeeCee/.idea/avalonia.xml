@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AvaloniaProject">
+    <option name="projectPerEditor">
+      <map>
+        <entry key="DeeCee.UI/App.axaml" value="DeeCee.UI/DeeCee.UI.csproj" />
+        <entry key="DeeCee.UI/DasmView.axaml" value="DeeCee.UI/DeeCee.UI.csproj" />
+        <entry key="DeeCee.UI/MainWindow.axaml" value="DeeCee.UI/DeeCee.UI.csproj" />
+      </map>
+    </option>
+  </component>
+</project>
