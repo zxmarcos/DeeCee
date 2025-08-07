@@ -28,6 +28,7 @@ public class Instruction
             Opcode.AND          => $"{dst} <- {opA} & {opB}",
             Opcode.OR           => $"{dst} <- {opA} | {opB}",
             Opcode.XOR          => $"{dst} <- {opA} ^ {opB}",
+            Opcode.NOT          => $"{dst} <- ~{opA}",
             Opcode.CMP_LT       => $"cmp_lt {opA}, {opB} -> {dst} ",
             Opcode.CMP_GT       => $"cmp_gt {opA}, {opB} -> {dst}",
             Opcode.CMP_GE       => $"cmp_ge {opA}, {opB} -> {dst}",

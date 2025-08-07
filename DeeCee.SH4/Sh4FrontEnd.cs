@@ -85,7 +85,15 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0100() { }
     private void Op0101() { }
-    private void Op0110() { }
+
+    private void Op0110()
+    {
+        switch (Context.Op.Part(0))
+        {
+            case 0b0111: BitwiseOps.Not(Context);
+                return;
+        }
+    }
 
     private void Op0111()
     {

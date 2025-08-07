@@ -9,6 +9,7 @@ public enum Opcode
     AND,
     OR,
     XOR,
+    NOT,
     CMP_EQ,
     CMP_NE,
     CMP_LT,
@@ -18,4 +19,5 @@ public enum Opcode
     BRANCH,
     BRANCH_TRUE,
     BRANCH_FALSE,
+    
 }

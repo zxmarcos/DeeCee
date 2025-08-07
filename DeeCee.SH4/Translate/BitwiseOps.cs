@@ -70,4 +70,10 @@ public static class BitwiseOps
         var result = ir.Xor(data, ir.Constant((UInt32) ir.Op.Imm8()));
         ir.Store(ea, result);
     }
+    
+    public static void Not(Sh4EmitterContext context)
+    {
+        var mReg = context.GetReg(context.Op.M());
+        context.SetReg(context.Op.N(), context.Not(mReg));
+    }
 }

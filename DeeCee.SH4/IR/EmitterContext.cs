@@ -43,6 +43,13 @@ public class EmitterContext
         return result;
     }
     
+    public Operand Not(Operand a)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, null, result, Opcode.NOT));
+        return result;
+    }
+    
     public Operand CompareEqual(Operand a, Operand b)
     {
         var result = AllocateLocal();

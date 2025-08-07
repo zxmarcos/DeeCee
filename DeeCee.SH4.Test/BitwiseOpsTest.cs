@@ -198,4 +198,23 @@ public unsafe class BitwiseOpsTest
             Assert.That(_memory.Read32(0x0), Is.EqualTo(a ^ b));
         }
     }
+    
+    [Test]
+    public void TestNOT()
+    {
+        Sh4FrontEnd fe = new();
+        fe.Compile(Sh4Assembler.NOT(1, 0));
+
+        fixed (Sh4CpuState* statePtr = &_state)
+        {
+            Sh4Interpreter interpreter = new(statePtr);
+
+            Console.WriteLine(fe.Context.Block);
+            _state.R[0] = 0;
+            _state.R[1] = 12;
+            _state.SR = 0;
+            interpreter.Execute(fe.Context.Block);
+            Assert.That(_state.R[0], Is.EqualTo(~12U));
+        }
+    }
 }

@@ -188,7 +188,12 @@ public unsafe class Sh4Interpreter
                     SetValue(instruction.Destiny, a ^ b);
                     break;
                 }
-
+                case Opcode.NOT:
+                {
+                    var a = GetValue(instruction.A);
+                    SetValue(instruction.Destiny, ~a);
+                    break;
+                }
 
                 case Opcode.COPY:
                 {
