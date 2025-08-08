@@ -57,6 +57,27 @@ public class EmitterContext
         return result;
     }
     
+    public Operand Shl(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.SHL));
+        return result;
+    }
+    
+    public Operand Shr(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.SHR));
+        return result;
+    }
+    
+    public Operand Sar(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.SAR));
+        return result;
+    }
+    
     public Operand CompareEqual(Operand a, Operand b)
     {
         var result = AllocateLocal();

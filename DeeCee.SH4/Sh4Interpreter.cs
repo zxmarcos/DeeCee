@@ -201,6 +201,7 @@ public unsafe class Sh4Interpreter
                     SetValue(instruction.Destiny, ~a);
                     break;
                 }
+                
 
                 case Opcode.COPY:
                 {
@@ -282,7 +283,28 @@ public unsafe class Sh4Interpreter
 
                     break;
                 }
-                
+
+                case Opcode.SHL:
+                {
+                    var a = GetValue(instruction.A);
+                    var b = (byte)GetValue(instruction.B);
+                    SetValue(instruction.Destiny, a << b);
+                    break;
+                }
+                case Opcode.SHR:
+                {
+                    var a = GetValue(instruction.A);
+                    var b = (byte)GetValue(instruction.B);
+                    SetValue(instruction.Destiny, a >> b);
+                    break;
+                }
+                case Opcode.SAR:
+                {
+                    var a = GetValue(instruction.A);
+                    var b = (byte)GetValue(instruction.B);
+                    SetValue(instruction.Destiny, (UInt32)((Int32)a >> b));
+                    break;
+                }
                 default:
                     throw new ArgumentOutOfRangeException();
             }
