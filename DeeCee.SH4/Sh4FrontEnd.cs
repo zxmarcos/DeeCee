@@ -56,6 +56,21 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0000()
     {
+        switch (Context.Op.Value & 0xFFF)
+        {
+            // CLRS
+            case 0b000001001000: FlagOps.ClrS(Context);
+                return;
+            // CLRT
+            case 0b000000001000: FlagOps.ClrT(Context);
+                return;
+            // SETS
+            case 0b000001011000 : FlagOps.SetS(Context);
+                return;
+            // SETT
+            case 0b000000011000: FlagOps.SetT(Context);
+                return;
+        }
         throw new NotImplementedException();
     }
 

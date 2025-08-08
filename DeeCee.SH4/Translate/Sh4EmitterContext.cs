@@ -21,9 +21,19 @@ public class Sh4EmitterContext : EmitterContext
         SetSR(Or(GetSR(), Constant(1)));
     }
     
+    public void SetS()
+    {
+        SetSR(Or(GetSR(), Constant(2)));
+    }
+    
     public void ClearT()
     {
         SetSR(And(GetSR(), Constant(~1)));
+    }
+    
+    public void ClearS()
+    {
+        SetSR(And(GetSR(), Constant(~2)));
     }
 
     public Operand GetSR()
