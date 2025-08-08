@@ -14,6 +14,8 @@ public enum Opcode
     SHL,
     SHR,
     SAR,
+    ROL,
+    ROR,
     CMP_EQ,
     CMP_NE,
     CMP_LT,

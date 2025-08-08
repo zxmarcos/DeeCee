@@ -305,6 +305,20 @@ public unsafe class Sh4Interpreter
                     SetValue(instruction.Destiny, (UInt32)((Int32)a >> b));
                     break;
                 }
+                case Opcode.ROL:
+                {
+                    var a = GetValue(instruction.A);
+                    var b = (byte)GetValue(instruction.B);
+                    SetValue(instruction.Destiny, (a << b) | (a >> (32 - b)));
+                    break;
+                }
+                case Opcode.ROR:
+                {
+                    var a = GetValue(instruction.A);
+                    var b = (byte)GetValue(instruction.B);
+                    SetValue(instruction.Destiny, (a >> b) | (a << (32 - b)));;
+                    break;
+                }
                 default:
                     throw new ArgumentOutOfRangeException();
             }

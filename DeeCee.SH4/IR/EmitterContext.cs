@@ -78,6 +78,20 @@ public class EmitterContext
         return result;
     }
     
+    public Operand RotateLeft(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.ROL));
+        return result;
+    }
+    
+    public Operand RotateRight(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.ROR));
+        return result;
+    }
+    
     public Operand CompareEqual(Operand a, Operand b)
     {
         var result = AllocateLocal();

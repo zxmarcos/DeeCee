@@ -33,6 +33,8 @@ public class Instruction
             Opcode.SHL          => $"{dst} <- {opA} << {opB}",
             Opcode.SHR          => $"{dst} <- {opA} >> {opB}",
             Opcode.SAR          => $"{dst} <- {opA} >>> {opB}",
+            Opcode.ROL          => $"{dst} <- {opA} *<< {opB}",
+            Opcode.ROR          => $"{dst} <- {opA} >>* {opB}",
             Opcode.CMP_LT       => $"cmp_lt {opA}, {opB} -> {dst} ",
             Opcode.CMP_GT       => $"cmp_gt {opA}, {opB} -> {dst}",
             Opcode.CMP_GT_SIGN  => $"cmp_gt_sign {opA}, {opB} -> {dst}",
