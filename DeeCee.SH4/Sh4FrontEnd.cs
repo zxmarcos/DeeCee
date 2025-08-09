@@ -59,18 +59,23 @@ public class Sh4FrontEnd : Sh4BaseCpu
         switch (Context.Op.Value & 0xFFF)
         {
             // CLRS
-            case 0b000001001000: FlagOps.ClrS(Context);
+            case 0b000001001000:
+                FlagOps.ClrS(Context);
                 return;
             // CLRT
-            case 0b000000001000: FlagOps.ClrT(Context);
+            case 0b000000001000:
+                FlagOps.ClrT(Context);
                 return;
             // SETS
-            case 0b000001011000 : FlagOps.SetS(Context);
+            case 0b000001011000:
+                FlagOps.SetS(Context);
                 return;
             // SETT
-            case 0b000000011000: FlagOps.SetT(Context);
+            case 0b000000011000:
+                FlagOps.SetT(Context);
                 return;
         }
+
         throw new NotImplementedException();
     }
 
@@ -164,17 +169,90 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0100()
     {
-        var p0 = Context.Op.Part(0);
-        var p1 = Context.Op.Part(1);
-        if (p1 == 0b0001 && p0 == 0b0101)
+        switch (Context.Op.Value & 0b0000_1111_1111)
         {
-            CompareOps.CmpPl(Context);
-            return;
-        }
-        else if (p1 == 0b0001 && p0 == 0b0001)
-        {
-            CompareOps.CmpPz(Context);
-            return;
+            // Instruções com prefixo mmmm
+            case 0b0000_0000_0110: break; // LDSMMACH
+            case 0b0000_0000_0111: break; // LDCMSR
+            case 0b0000_0000_1010: break; // LDSMACH
+            case 0b0000_0000_1110: break; // LDCSR
+            case 0b0000_0001_0110: break; // LDSMMACL
+            case 0b0000_0001_0111: break; // LDCMGBR
+            case 0b0000_0001_1010: break; // LDSMACL
+            case 0b0000_0001_1110: break; // LDCGBR
+            case 0b0000_0010_0110: break; // LDSMPR
+            case 0b0000_0010_0111: break; // LDCMVBR
+            case 0b0000_0010_1010: break; // LDSPR
+            case 0b0000_0010_1110: break; // LDCVBR
+            case 0b0000_0011_0111: break; // LDCMSSR
+            case 0b0000_0011_1110: break; // LDCSSR
+            case 0b0000_0100_0111: break; // LDCMSPC
+            case 0b0000_0100_1110: break; // LDCSPC
+            case 0b0000_1111_0110: break; // LDCMDBR
+            case 0b0000_1111_1010: break; // LDCDBR
+
+            // Instruções com prefixo nnnn
+            case 0b0000_0000_0000: ShiftOps.Shll(Context); return; // SHLL
+            case 0b0000_0000_0001: ShiftOps.Shlr(Context); return; // SHLR
+            case 0b0000_0000_0010: break; // STSMMACH
+            case 0b0000_0000_0011: break; // STCMSR
+            case 0b0000_0000_0100: ShiftOps.Rotl(Context); return; // ROTL
+            case 0b0000_0000_0101: ShiftOps.Rotr(Context); return; // ROTR
+            case 0b0000_0000_1000: ShiftOps.Shll2(Context); return; // SHLL2
+            case 0b0000_0000_1001: ShiftOps.Shlr2(Context); return; // SHLR2
+            case 0b0000_0000_1011: break; // JSR
+            case 0b0000_0001_0000: break; // DT
+            case 0b0000_0001_0001: CompareOps.CmpPz(Context); return; // CMPPZ
+            case 0b0000_0001_0010: break; // STSMMACL
+            case 0b0000_0001_0011: break; // STCMGBR
+            case 0b0000_0001_0101: CompareOps.CmpPl(Context); return; // CMPPL
+            case 0b0000_0001_1000: ShiftOps.Shll8(Context); return; // SHLL8
+            case 0b0000_0001_1001: ShiftOps.Shlr8(Context); return; // SHLR8
+            case 0b0000_0001_1011: break; // TAS
+            case 0b0000_0010_0000: ShiftOps.Shal(Context); return; // SHAL
+            case 0b0000_0010_0001: ShiftOps.Shar(Context); return; // SHAR
+            case 0b0000_0010_0010: break; // STSMPR
+            case 0b0000_0010_0011: break; // STCMVBR
+            case 0b0000_0010_0100: ShiftOps.Rotcl(Context); return; // ROTCL
+            case 0b0000_0010_0101: ShiftOps.Rotcr(Context); return; // ROTCR
+            case 0b0000_0010_1000: ShiftOps.Shll16(Context); return; // SHLL16
+            case 0b0000_0010_1001: ShiftOps.Shlr16(Context); return; // SHLR16
+            case 0b0000_0010_1011: break; // JMP
+            case 0b0000_0011_0010: break; // STCMSGR
+            case 0b0000_0011_0011: break; // STCMSSR
+            case 0b0000_0100_0011: break; // STCMSPC
+            case 0b0000_1111_0010: break; // STCMDBR
+
+            default:
+                // Verifica instruções com padrões especiais
+                if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_0000_0111) // LDCMRBANK mmmm1nnn0111
+                {
+                    // LDCMRBANK
+                }
+                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_0000_1110) // LDCRBANK mmmm1nnn1110
+                {
+                    // LDCRBANK
+                }
+                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_0000_0011) // STCMRBANK nnnn1mmm0011
+                {
+                    // STCMRBANK
+                }
+                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1100) // SHAD nnnnmmmm1100
+                {
+                    ShiftOps.Shad(Context);  // SHAD
+                    return;
+                }
+                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1101) // SHLD nnnnmmmm1101
+                {
+                    ShiftOps.Shld(Context); // SHLD
+                    return;
+                }
+                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1111) // MACW nnnnmmmm1111
+                {
+                    // MACW
+                }
+
+                break;
         }
 
         throw new NotImplementedException();

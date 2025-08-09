@@ -13,9 +13,12 @@ public static class ShiftOps
         var result = ir.ShiftLeft(nReg, ir.Constant(1));
         ir.If(tBit, () =>
         {
-            result = ir.Or(result, ir.Constant(1));
+            ir.SetReg(ir.Op.N(), ir.Or(result, ir.Constant(1)));
+        }, () =>
+        {
+            ir.SetReg(ir.Op.N(), result);
         });
-        ir.SetReg(ir.Op.N(), result);
+        
     }
     
     public static void Rotcr(Sh4EmitterContext ir)
@@ -29,9 +32,12 @@ public static class ShiftOps
         var result = ir.ShiftRight(nReg, ir.Constant(1));
         ir.If(tBit, () =>
         {
-            result = ir.Or(result, ir.Constant(0x80000000));
+            ir.SetReg(ir.Op.N(), ir.Or(result, ir.Constant(0x80000000)));
+        }, () =>
+        {
+            ir.SetReg(ir.Op.N(), result);
         });
-        ir.SetReg(ir.Op.N(), result);
+        
     }
     
     public static void Rotl(Sh4EmitterContext ir)
@@ -74,24 +80,24 @@ public static class ShiftOps
         var sgn = ir.And(mReg, ir.Constant(0x80000000));
         
         // if (sgn == 0)
-        ir.If(ir.CompareEqual(sgn, ir.Constant(0)), () =>
+        ir.If(ir.IsZero(sgn), () =>
         {
             // R[n] <<= (R[m] & 0x1F);
             ir.SetReg(n, ir.ShiftLeft(nReg, ir.And(mReg, ir.Constant(0x1F))));
         }, () =>
         {
             // else if ((R[m] & 0x1F) == 0)
-            ir.If(ir.CompareEqual(ir.And(mReg, ir.Constant(0x1F)), ir.Constant(0)), () =>
+            ir.If(ir.IsZero(ir.And(mReg, ir.Constant(0x1F))), () =>
             {
                 // if ((R[n] & 0x80000000) == 0)
-                ir.If(ir.And(nReg, ir.Constant(0x80000000)), () =>
+                ir.If(ir.IsZero(ir.And(nReg, ir.Constant(0x80000000))), () =>
                 {
                     // R[n] = 0;
-                    ir.SetReg(n, ir.Constant(~0));
+                    ir.SetReg(n, ir.Constant(0));
                 }, () =>
                 {
                     // R[n] = 0xFFFFFFFF;
-                    ir.SetReg(n, ir.Constant(0));
+                    ir.SetReg(n, ir.Constant(~0));
                 });
             }, () =>
             {
@@ -114,14 +120,14 @@ public static class ShiftOps
         var sgn = ir.And(mReg, ir.Constant(0x80000000));
         
         // if (sgn == 0)
-        ir.If(ir.CompareEqual(sgn, ir.Constant(0)), () =>
+        ir.If(ir.IsZero(sgn), () =>
         {
             // R[n] <<= (R[m] & 0x1F);
             ir.SetReg(n, ir.ShiftLeft(nReg, ir.And(mReg, ir.Constant(0x1F))));
         }, () =>
         {
             // else if ((R[m] & 0x1F) == 0)
-            ir.If(ir.CompareEqual(ir.And(mReg, ir.Constant(0x1F)), ir.Constant(0)), () =>
+            ir.If(ir.IsZero(ir.And(mReg, ir.Constant(0x1F))), () =>
             {
                 // R[n] = 0;
                 ir.SetReg(n, ir.Constant(0));
