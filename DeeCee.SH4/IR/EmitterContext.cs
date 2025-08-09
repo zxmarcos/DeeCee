@@ -167,6 +167,11 @@ public class EmitterContext
         }
     }
 
+    public Operand IsZero(Operand a)
+    {
+        return CompareEqual(a, Constant(0));
+    }
+
     public void SetReg(byte regNum, Operand value)
     {
         Store(GetReg(regNum), value);
@@ -251,5 +256,10 @@ public class EmitterContext
     public void BranchIfFalse(Operand operand, Operand label)
     {
         Block.Add(new Instruction(operand, null, label, Opcode.BRANCH_FALSE));
+    }
+
+    public void DebugOp(Operand operand, string? message)
+    {
+        Block.Add(new Instruction(operand, Operand.DebugMessage(message), null, Opcode.DEBUG));
     }
 }

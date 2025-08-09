@@ -7,5 +7,6 @@ public enum OperandKind
     Constant,
     Register,
     Memory,
-    Label
+    Label,
+    DebugMessage,
 }

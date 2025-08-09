@@ -319,6 +319,11 @@ public unsafe class Sh4Interpreter
                     SetValue(instruction.Destiny, (a >> b) | (a << (32 - b)));;
                     break;
                 }
+                case Opcode.DEBUG:
+                {
+                    Console.WriteLine($"DEBUG {instruction.A} {instruction.B}");
+                    break;
+                }
                 default:
                     throw new ArgumentOutOfRangeException();
             }

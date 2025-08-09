@@ -12,6 +12,7 @@ public class Operand
     public double ConstDouble { get; set; }
     public int BlockOffset { get; set; }
     public int VarIndex { get; set; } = -1;
+    public string? Message { get; set; } = null;
 
     public Operand? Address { get; set; } = null;
     public MemoryWidth? MemoryWidth { get; set; } = null;
@@ -48,6 +49,11 @@ public class Operand
     {
         return new Operand(OperandKind.LocalVariable, 0, regType);
     }
+
+    public static Operand DebugMessage(string message)
+    {
+        return new Operand(OperandKind.DebugMessage) { Message = message };
+    }
     
     public override string ToString()
     {
@@ -73,6 +79,8 @@ public class Operand
             OperandKind.Label => $"@{BlockOffset}",
             
             OperandKind.Memory => $"({Address})",
+            
+            OperandKind.DebugMessage => $"'{Message}'",
 
             _ => $"Operand({Kind})"
         };

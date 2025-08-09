@@ -2,6 +2,7 @@
 
 public enum Opcode
 {
+    DEBUG,
     COPY,
     ADD,
     SUB,
