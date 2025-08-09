@@ -454,6 +454,15 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0111:
                 BitwiseOps.Not(Context);
                 return;
+            
+            // SWAP.B Rm, Rn
+            case 0b1000:
+                DataOps.Swapb(Context);
+                return;
+            // SWAP.W Rm, Rn
+            case 0b1001:
+                DataOps.Swapw(Context);
+                return;
         }
 
         throw new NotImplementedException();
