@@ -82,7 +82,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 break;
             case 0b0000_0010_1000:
                 // CLRMAC
-                break;
+                ArithmeticOps.ClrMac(Context);
+                return;
             case 0b0000_0010_1011:
                 // RTE
                 break;

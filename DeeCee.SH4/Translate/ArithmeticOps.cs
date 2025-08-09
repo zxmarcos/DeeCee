@@ -153,4 +153,10 @@ public static class ArithmeticOps
         // if (temp<R[n]) T=1
         ir.If(ir.CompareGreaterOrEqualSigned(ir.GetReg(ir.Op.N()), tmp), ir.SetT);
     }
+
+    public static void ClrMac(Sh4EmitterContext ir)
+    {
+        ir.SetZero(ir.GetMACH());
+        ir.SetZero(ir.GetMACL());
+    }
 }

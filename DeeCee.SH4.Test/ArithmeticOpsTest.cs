@@ -165,5 +165,19 @@ namespace DeeCee.SH4.Test
                 () => { _state.R[1] = 0; _state.T = false; },
                 s => { Assert.That(s.R[2], Is.EqualTo(0)); Assert.That(s.T, Is.True); });
         }
+        
+        [Test]
+        public void TestClrMac()
+        {
+            // CLRMAC
+            CompileInstruction(Sh4Assembler.CLRMAC());
+            ExecuteAndAssert(
+                () => { _state.MACH = 1; _state.MACL = 2; },
+                s =>
+                {
+                    Assert.That(s.MACH, Is.EqualTo(0));
+                    Assert.That(s.MACL, Is.EqualTo(0));
+                });
+        }
     }
 }
