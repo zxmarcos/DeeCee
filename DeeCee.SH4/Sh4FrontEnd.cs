@@ -299,6 +299,15 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(0))
         {
+            // NEGC Rm, Rn
+            case 0b1010:
+                ArithmeticOps.NegC(Context);
+                return;
+            // NEG Rm, Rn
+            case 0b1011:
+                ArithmeticOps.Neg(Context);
+                return;
+            
             // EXTU.B Rm, Rn
             case 0b1100:
                 ExtOps.Extub(Context);

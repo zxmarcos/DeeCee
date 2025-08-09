@@ -134,4 +134,23 @@ public static class ArithmeticOps
             ir.If(ir.CompareEqual(ans, ir.Constant(1)), ir.SetT, ir.ClearT);
         }, ir.ClearT);
     }
+    
+    public static void Neg(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        ir.SetReg(ir.Op.N(), ir.Sub(ir.Constant(0), mReg));
+    }
+    
+    public static void NegC(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        // tmp = 0-R[m]
+        var tmp = ir.Sub(ir.Constant(0), mReg);
+        // R[n] = temp-T
+        ir.SetReg(ir.Op.N(), ir.Sub(tmp, ir.GetT()));
+        // if (0<temp) T = 1 else T = 0
+        ir.If(ir.CompareGreaterOrEqualSigned(tmp, ir.Constant(0)), ir.SetT, ir.ClearT);
+        // if (temp<R[n]) T=1
+        ir.If(ir.CompareGreaterOrEqualSigned(ir.GetReg(ir.Op.N()), tmp), ir.SetT);
+    }
 }
