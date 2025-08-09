@@ -100,21 +100,26 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
             case var v when (v & 0b0000_0000_1111) == 0b0000_0000_0010:
                 // STCSR
+                ControlOps.StcSr(Context); return;
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0000_0011:
                 // BSRF
                 BranchOps.Bsrf(Context);
                 return;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0000_1010:
+                ControlOps.StsMach(Context); return;
                 // STSMACH
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0001_0010:
+                ControlOps.StcGbr(Context); return;
                 // STCGBR
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0001_1010:
+                ControlOps.StsMacl(Context); return;
                 // STSMACL
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0010_0010:
+                ControlOps.StcVbr(Context); return;
                 // STCVBR
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0010_0011:
@@ -125,15 +130,19 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 // MOVT
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0010_1010:
+                ControlOps.StsPr(Context); return;
                 // STSPR
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0011_0010:
+                ControlOps.StcSsr(Context); return;
                 // STCSSR
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0011_1010:
+                ControlOps.StcSgr(Context); return;
                 // STCSGR
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_0100_0010:
+                ControlOps.StcSpc(Context); return;
                 // STCSPC
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_1000_0011:
@@ -152,6 +161,7 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 // MOVCAL
                 break;
             case var v when (v & 0b0000_0000_1111) == 0b0000_1111_1010:
+                ControlOps.StcDbr(Context); return;
                 // STCDBR
                 break;
 
@@ -281,24 +291,24 @@ public class Sh4FrontEnd : Sh4BaseCpu
         switch (Context.Op.Value & 0b0000_1111_1111)
         {
             // Instruções com prefixo mmmm
-            case 0b0000_0000_0110: break; // LDSMMACH
-            case 0b0000_0000_0111: break; // LDCMSR
-            case 0b0000_0000_1010: break; // LDSMACH
-            case 0b0000_0000_1110: break; // LDCSR
-            case 0b0000_0001_0110: break; // LDSMMACL
-            case 0b0000_0001_0111: break; // LDCMGBR
-            case 0b0000_0001_1010: break; // LDSMACL
-            case 0b0000_0001_1110: break; // LDCGBR
-            case 0b0000_0010_0110: break; // LDSMPR
-            case 0b0000_0010_0111: break; // LDCMVBR
-            case 0b0000_0010_1010: break; // LDSPR
-            case 0b0000_0010_1110: break; // LDCVBR
-            case 0b0000_0011_0111: break; // LDCMSSR
-            case 0b0000_0011_1110: break; // LDCSSR
-            case 0b0000_0100_0111: break; // LDCMSPC
-            case 0b0000_0100_1110: break; // LDCSPC
-            case 0b0000_1111_0110: break; // LDCMDBR
-            case 0b0000_1111_1010: break; // LDCDBR
+            case 0b0000_0000_0110: ControlOps.LdsmMach(Context); return; // LDSMMACH
+            case 0b0000_0000_0111: ControlOps.LdcmSr(Context); return; // LDCMSR
+            case 0b0000_0000_1010: ControlOps.LdsMach(Context); return; // LDSMACH
+            case 0b0000_0000_1110: ControlOps.LdcSr(Context); return; // LDCSR
+            case 0b0000_0001_0110: ControlOps.LdsmMacl(Context); return; // LDSMMACL
+            case 0b0000_0001_0111: ControlOps.LdcmGbr(Context); return; // LDCMGBR
+            case 0b0000_0001_1010: ControlOps.LdsMacl(Context); return; // LDSMACL
+            case 0b0000_0001_1110: ControlOps.LdcGbr(Context); return; // LDCGBR
+            case 0b0000_0010_0110: ControlOps.LdsmPr(Context); return; // LDSMPR
+            case 0b0000_0010_0111: ControlOps.LdcmVbr(Context); return; // LDCMVBR
+            case 0b0000_0010_1010: ControlOps.LdsPr(Context); return; // LDSPR
+            case 0b0000_0010_1110: ControlOps.LdcVbr(Context); return; // LDCVBR
+            case 0b0000_0011_0111: ControlOps.LdcmSsr(Context); return; // LDCMSSR
+            case 0b0000_0011_1110: ControlOps.LdcSsr(Context); return; // LDCSSR
+            case 0b0000_0100_0111: ControlOps.LdcmSpc(Context); return; // LDCMSPC
+            case 0b0000_0100_1110: ControlOps.LdcSpc(Context); return; // LDCSPC
+            case 0b0000_1111_0110: ControlOps.LdcmDbr(Context); return; // LDCMDBR
+            case 0b0000_1111_1010: ControlOps.LdcDbr(Context); return; // LDCDBR
 
             // Instruções com prefixo nnnn
             case 0b0000_0000_0000:
@@ -307,8 +317,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_0000_0001:
                 ShiftOps.Shlr(Context);
                 return; // SHLR
-            case 0b0000_0000_0010: break; // STSMMACH
-            case 0b0000_0000_0011: break; // STCMSR
+            case 0b0000_0000_0010: ControlOps.StsmMach(Context); return; // STSMMACH
+            case 0b0000_0000_0011: ControlOps.StcmSr(Context); return; // STCMSR
             case 0b0000_0000_0100:
                 ShiftOps.Rotl(Context);
                 return; // ROTL
@@ -328,8 +338,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_0001_0001:
                 CompareOps.CmpPz(Context);
                 return; // CMPPZ
-            case 0b0000_0001_0010: break; // STSMMACL
-            case 0b0000_0001_0011: break; // STCMGBR
+            case 0b0000_0001_0010: ControlOps.StsmMacl(Context); return; // STSMMACL
+            case 0b0000_0001_0011: ControlOps.StcmGbr(Context); return; // STCMGBR
             case 0b0000_0001_0101:
                 CompareOps.CmpPl(Context);
                 return; // CMPPL
@@ -346,8 +356,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_0010_0001:
                 ShiftOps.Shar(Context);
                 return; // SHAR
-            case 0b0000_0010_0010: break; // STSMPR
-            case 0b0000_0010_0011: break; // STCMVBR
+            case 0b0000_0010_0010: ControlOps.StsmPr(Context); return; // STSMPR
+            case 0b0000_0010_0011: ControlOps.StcmVbr(Context); return; // STCMVBR
             case 0b0000_0010_0100:
                 ShiftOps.Rotcl(Context);
                 return; // ROTCL
@@ -363,10 +373,10 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_0010_1011:
                 BranchOps.Jmp(Context);
                 return; // JMP
-            case 0b0000_0011_0010: break; // STCMSGR
-            case 0b0000_0011_0011: break; // STCMSSR
-            case 0b0000_0100_0011: break; // STCMSPC
-            case 0b0000_1111_0010: break; // STCMDBR
+            case 0b0000_0011_0010: ControlOps.StcmSgr(Context); return; // STCMSGR
+            case 0b0000_0011_0011: ControlOps.StcmSsr(Context); return; // STCMSSR
+            case 0b0000_0100_0011: ControlOps.StcmSpc(Context); return; // STCMSPC
+            case 0b0000_1111_0010: ControlOps.StcmDbr(Context); return; // STCMDBR
 
             default:
                 // Verifica instruções com padrões especiais
