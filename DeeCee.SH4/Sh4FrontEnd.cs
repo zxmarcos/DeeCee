@@ -65,7 +65,7 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 return;
             case 0b0000_0000_1001:
                 // NOP
-                break;
+                return;
             case 0b0000_0000_1011:
                 // RTS
                 BranchOps.Rts(Context);
