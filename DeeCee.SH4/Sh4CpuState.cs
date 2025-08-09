@@ -7,6 +7,7 @@ public unsafe struct Sh4CpuState
     
     // MACH,MACL,PR,FPSCR,FPUL...
     public UInt32 PC;
+    public UInt32 PR;
     public UInt32 GBR;
     public UInt32 SR;
     public UInt32 SSR;

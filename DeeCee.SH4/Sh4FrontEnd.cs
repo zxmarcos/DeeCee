@@ -56,24 +56,133 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0000()
     {
-        switch (Context.Op.Value & 0xFFF)
+        var opcode = (ushort)(Context.Op.Value & 0xFFF);
+        switch (opcode)
         {
-            // CLRS
-            case 0b000001001000:
-                FlagOps.ClrS(Context);
-                return;
-            // CLRT
-            case 0b000000001000:
+            case 0b0000_0000_1000:
+                // CLRT
                 FlagOps.ClrT(Context);
                 return;
-            // SETS
-            case 0b000001011000:
-                FlagOps.SetS(Context);
+            case 0b0000_0000_1001:
+                // NOP
+                break;
+            case 0b0000_0000_1011:
+                // RTS
+                BranchOps.Rts(Context);
                 return;
-            // SETT
-            case 0b000000011000:
+            case 0b0000_0001_1000:
+                // SETT
                 FlagOps.SetT(Context);
                 return;
+            case 0b0000_0001_1001:
+                // DIV0U
+                break;
+            case 0b0000_0001_1011:
+                // SLEEP
+                break;
+            case 0b0000_0010_1000:
+                // CLRMAC
+                break;
+            case 0b0000_0010_1011:
+                // RTE
+                break;
+            case 0b0000_0011_1000:
+                // LDTLB
+                break;
+            case 0b0000_0100_1000:
+                // CLRS
+                FlagOps.ClrS(Context);
+                return;
+            case 0b0000_0101_1000:
+                // SETS
+                FlagOps.SetS(Context);
+                return;
+
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0000_0010:
+                // STCSR
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0000_0011:
+                // BSRF
+                BranchOps.Bsrf(Context);
+                return;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0000_1010:
+                // STSMACH
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0001_0010:
+                // STCGBR
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0001_1010:
+                // STSMACL
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_0010:
+                // STCVBR
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_0011:
+                // BRAF
+                BranchOps.Braf(Context);
+                return;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_1001:
+                // MOVT
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_1010:
+                // STSPR
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0011_0010:
+                // STCSSR
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0011_1010:
+                // STCSGR
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_0100_0010:
+                // STCSPC
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_1000_0011:
+                // PREF
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_1001_0011:
+                // OCBI
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_1010_0011:
+                // OCBP
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_1011_0011:
+                // OCBWB
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_1100_0011:
+                // MOVCAL
+                break;
+            case var v when (v & 0b0000_0000_1111) == 0b0000_1111_1010:
+                // STCDBR
+                break;
+
+            case var v when (v & 0b0000_1000_1111) == 0b0000_1000_0010:
+                // STCRBANK
+                break;
+
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0100:
+                // MOVBS_IDX
+                break;
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0101:
+                // MOVWS_IDX
+                break;
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0110:
+                // MOVLS_IDX
+                break;
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0111:
+                // MULL
+                break;
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1100:
+                // MOVBL_IDX
+                break;
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1101:
+                // MOVWL_IDX
+                break;
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1110:
+                // MOVLL_IDX
+                break;
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1111:
+                // MACL
+                break;
         }
 
         throw new NotImplementedException();
@@ -212,7 +321,9 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_0000_1001:
                 ShiftOps.Shlr2(Context);
                 return; // SHLR2
-            case 0b0000_0000_1011: break; // JSR
+            case 0b0000_0000_1011:
+                BranchOps.Jsr(Context);
+                return; // JSR
             case 0b0000_0001_0000: break; // DT
             case 0b0000_0001_0001:
                 CompareOps.CmpPz(Context);
@@ -249,7 +360,9 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_0010_1001:
                 ShiftOps.Shlr16(Context);
                 return; // SHLR16
-            case 0b0000_0010_1011: break; // JMP
+            case 0b0000_0010_1011:
+                BranchOps.Jmp(Context);
+                return; // JMP
             case 0b0000_0011_0010: break; // STCMSGR
             case 0b0000_0011_0011: break; // STCMSSR
             case 0b0000_0100_0011: break; // STCMSPC
@@ -307,7 +420,7 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b1011:
                 ArithmeticOps.Neg(Context);
                 return;
-            
+
             // EXTU.B Rm, Rn
             case 0b1100:
                 ExtOps.Extub(Context);
@@ -346,6 +459,22 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b1000:
                 CompareOps.CmpEqI(Context);
                 return;
+            // BF disp
+            case 0b1011:
+                BranchOps.Bf(Context);
+                return;
+            // BFS disp
+            case 0b1111:
+                BranchOps.Bfs(Context);
+                return;
+            // BT disp
+            case 0b1001:
+                BranchOps.Bt(Context);
+                return;
+            // BTS disp
+            case 0b1101:
+                BranchOps.Bts(Context);
+                return;
         }
 
         throw new NotImplementedException();
@@ -358,12 +487,14 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op1010()
     {
-        throw new NotImplementedException();
+        // BRA disp
+        BranchOps.Bra(Context);
     }
 
     private void Op1011()
     {
-        throw new NotImplementedException();
+        // BSR disp
+        BranchOps.Bsr(Context);
     }
 
     private void Op1100()

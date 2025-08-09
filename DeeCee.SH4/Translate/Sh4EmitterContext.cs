@@ -6,8 +6,10 @@ public class Sh4EmitterContext : EmitterContext
 
     public enum RegConstants : byte
     {
-        SR = 16,
+        PC = 16,
+        SR,
         GBR,
+        PR
     };
     
     public Operand GetT()
@@ -50,6 +52,16 @@ public class Sh4EmitterContext : EmitterContext
     {
         SetReg((byte)RegConstants.SR, sr);
     }
+    
+    public Operand GetPC()
+    {
+        return GetReg((byte)RegConstants.PC);
+    }
+    
+    public void SetPC(Operand pc)
+    {
+        SetReg((byte)RegConstants.PC, pc);
+    }
 
     // op = 1
     public void SetOne(Operand op)
@@ -61,7 +73,14 @@ public class Sh4EmitterContext : EmitterContext
     {
         Store(op, Constant(0));
     }
-
-
-
+    
+    public void SetPR(Operand pr)
+    {
+        SetReg((byte)RegConstants.PR, pr);
+    }
+    
+    public Operand GetPR()
+    {
+        return GetReg((byte)RegConstants.PR);
+    }
 }
