@@ -335,7 +335,9 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_0000_1011:
                 BranchOps.Jsr(Context);
                 return; // JSR
-            case 0b0000_0001_0000: break; // DT
+            case 0b0000_0001_0000:
+                ArithmeticOps.Dt(Context);
+                return; // DT
             case 0b0000_0001_0001:
                 CompareOps.CmpPz(Context);
                 return; // CMPPZ

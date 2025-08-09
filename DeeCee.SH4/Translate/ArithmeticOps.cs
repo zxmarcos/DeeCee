@@ -159,4 +159,12 @@ public static class ArithmeticOps
         ir.SetZero(ir.GetMACH());
         ir.SetZero(ir.GetMACL());
     }
+    
+    public static void Dt(Sh4EmitterContext ir)
+    {
+        var n = ir.Op.N();
+        var tmp = ir.Sub(ir.GetReg(n), ir.Constant(1));
+        ir.SetReg(n, tmp);
+        ir.If(ir.IsZero(tmp), ir.SetT, ir.ClearT);
+    }
 }
