@@ -22,6 +22,7 @@ public unsafe class Sh4Interpreter
         // A expressão switch é uma forma moderna e concisa para o switch-case.
         return regNum switch
         {
+            >= (byte)Sh4EmitterContext.RegConstants.R0Bank and < (byte)Sh4EmitterContext.RegConstants.RnBank => _state->RBank[regNum - (byte)Sh4EmitterContext.RegConstants.R0Bank],
             (byte)Sh4EmitterContext.RegConstants.PC   => _state->PC,
             (byte)Sh4EmitterContext.RegConstants.PR   => _state->PR,
             (byte)Sh4EmitterContext.RegConstants.GBR  => _state->GBR,
@@ -45,6 +46,9 @@ public unsafe class Sh4Interpreter
     {
         switch (regNum)
         {
+            case >= (byte)Sh4EmitterContext.RegConstants.R0Bank and < (byte)Sh4EmitterContext.RegConstants.RnBank:
+                _state->RBank[regNum - (byte)Sh4EmitterContext.RegConstants.R0Bank] = value;
+                break;
             case (byte)Sh4EmitterContext.RegConstants.PC:   _state->PC = value;   break;
             case (byte)Sh4EmitterContext.RegConstants.PR:   _state->PR = value;   break;
             case (byte)Sh4EmitterContext.RegConstants.GBR:  _state->GBR = value;  break;

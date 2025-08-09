@@ -74,15 +74,14 @@ public class ControlOps
     
     public static void LdcRbank(Sh4EmitterContext ir)
     {
-        // TODO:
-        throw new NotImplementedException();
+        ir.SetBankedReg(ir.Op.M() & 7, ir.GetReg(ir.Op.N()));
     }
     
     public static void StcRbank(Sh4EmitterContext ir)
     {
-        // TODO:
-        throw new NotImplementedException();
+        ir.SetReg(ir.Op.N(), ir.GetBankedReg(ir.Op.M() & 7));
     }
+    
     
     public static void LdcmSr(Sh4EmitterContext ir)
     {
@@ -198,14 +197,18 @@ public class ControlOps
     
     public static void LdcmRbank(Sh4EmitterContext ir)
     {
-        // TODO:
-        throw new NotImplementedException();
+        var ea = ir.Memory(ir.GetReg(ir.Op.N()));
+        var data = ir.Load(ea);
+        ir.SetBankedReg(ir.Op.M() & 7, data);
+        ir.SetReg(ir.Op.N(), ir.Add(ir.GetReg(ir.Op.N()), ir.Constant(4)));
     }
     
     public static void StcmRbank(Sh4EmitterContext ir)
     {
-        // TODO:
-        throw new NotImplementedException();
+        var addr = ir.Sub(ir.GetReg(ir.Op.N()), ir.Constant(4));
+        ir.SetReg(ir.Op.N(), addr);
+        var ea = ir.Memory(addr);
+        ir.Store(ea, ir.GetBankedReg(ir.Op.M() & 7));
     }
     
     

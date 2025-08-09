@@ -1,4 +1,6 @@
-﻿namespace DeeCee.SH4.Translate;
+﻿using System.Diagnostics;
+
+namespace DeeCee.SH4.Translate;
 
 public class Sh4EmitterContext : EmitterContext
 {
@@ -6,7 +8,9 @@ public class Sh4EmitterContext : EmitterContext
 
     public enum RegConstants : byte
     {
-        PC = 16,
+        R0Bank = 16,
+        RnBank = R0Bank + 7,
+        PC,
         SR,
         GBR,
         PR,
@@ -176,5 +180,17 @@ public class Sh4EmitterContext : EmitterContext
     public Operand GetMACL()
     {
         return GetReg((byte)RegConstants.MACL);
+    }
+
+    public void SetBankedReg(int i, Operand value)
+    {
+        Debug.Assert(i < 8, "Invalid register index");
+        SetReg((byte)(i + (int)RegConstants.R0Bank), value);
+    }
+    
+    public Operand GetBankedReg(int i)
+    {
+        Debug.Assert(i < 8, "Invalid register index");
+        return GetReg((byte)(i + (int)RegConstants.R0Bank));
     }
 }
