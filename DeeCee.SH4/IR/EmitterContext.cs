@@ -141,6 +141,36 @@ public class EmitterContext
         return result;
     }
 
+    public Operand SignExtend8(Operand a)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, null, result, Opcode.SIGN_EXT8));
+        return result;
+    }
+    
+    public Operand SignExtend16(Operand a)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, null, result, Opcode.SIGN_EXT16));
+        return result;
+    }
+    
+    public Operand ZeroExtend8(Operand a)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, null, result, Opcode.ZERO_EXT8));
+        return result;
+    }
+    
+    public Operand ZeroExtend16(Operand a)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, null, result, Opcode.ZERO_EXT16));
+        return result;
+    }
+    
+    
+
     public void If(Operand a, Action ifTrueBody, Action? ifFalseBody = null)
     {
         Debug.Assert(ifTrueBody != null);

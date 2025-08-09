@@ -324,6 +324,32 @@ public unsafe class Sh4Interpreter
                     Console.WriteLine($"DEBUG {instruction.A} {instruction.B}");
                     break;
                 }
+
+                case Opcode.SIGN_EXT8:
+                {
+                    var a = GetValue(instruction.A);
+                    SetValue(instruction.Destiny, (UInt32)(sbyte)(a & 0xFF));
+                    break;
+                }
+                case Opcode.SIGN_EXT16:
+                {
+                    var a = GetValue(instruction.A);
+                    SetValue(instruction.Destiny, (UInt32)(short)(a & 0xFFFF));
+                    break;
+                }
+                case Opcode.ZERO_EXT8:
+                {
+                    var a = GetValue(instruction.A);
+                    SetValue(instruction.Destiny, (byte)(a & 0xFF));
+                    break;
+                }
+                case Opcode.ZERO_EXT16:
+                {
+                    var a = GetValue(instruction.A);
+                    SetValue(instruction.Destiny, (UInt16)(a & 0xFFFF));
+                    break;
+                }
+
                 default:
                     throw new ArgumentOutOfRangeException();
             }

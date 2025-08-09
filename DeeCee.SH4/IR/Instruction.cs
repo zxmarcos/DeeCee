@@ -48,6 +48,10 @@ public class Instruction
             Opcode.BRANCH_TRUE  => $"branch_if_true {opA} -> {dst}",
             Opcode.BRANCH_FALSE => $"branch_if_false {opA} -> {dst}",
             Opcode.DEBUG        => $"debug {opA} {opB}",
+            Opcode.SIGN_EXT8    => $"sign_ext8 {opA} -> {dst}",
+            Opcode.SIGN_EXT16   => $"sign_ext16 {opA} -> {dst}",
+            Opcode.ZERO_EXT8    => $"zero_ext8 {opA} -> {dst}",
+            Opcode.ZERO_EXT16   => $"zero_ext16 {opA} -> {dst}",
             _ => $"[invalid opcode: {Opcode}]"
         };
     }

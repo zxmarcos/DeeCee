@@ -192,31 +192,63 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b0000_1111_1010: break; // LDCDBR
 
             // Instruções com prefixo nnnn
-            case 0b0000_0000_0000: ShiftOps.Shll(Context); return; // SHLL
-            case 0b0000_0000_0001: ShiftOps.Shlr(Context); return; // SHLR
+            case 0b0000_0000_0000:
+                ShiftOps.Shll(Context);
+                return; // SHLL
+            case 0b0000_0000_0001:
+                ShiftOps.Shlr(Context);
+                return; // SHLR
             case 0b0000_0000_0010: break; // STSMMACH
             case 0b0000_0000_0011: break; // STCMSR
-            case 0b0000_0000_0100: ShiftOps.Rotl(Context); return; // ROTL
-            case 0b0000_0000_0101: ShiftOps.Rotr(Context); return; // ROTR
-            case 0b0000_0000_1000: ShiftOps.Shll2(Context); return; // SHLL2
-            case 0b0000_0000_1001: ShiftOps.Shlr2(Context); return; // SHLR2
+            case 0b0000_0000_0100:
+                ShiftOps.Rotl(Context);
+                return; // ROTL
+            case 0b0000_0000_0101:
+                ShiftOps.Rotr(Context);
+                return; // ROTR
+            case 0b0000_0000_1000:
+                ShiftOps.Shll2(Context);
+                return; // SHLL2
+            case 0b0000_0000_1001:
+                ShiftOps.Shlr2(Context);
+                return; // SHLR2
             case 0b0000_0000_1011: break; // JSR
             case 0b0000_0001_0000: break; // DT
-            case 0b0000_0001_0001: CompareOps.CmpPz(Context); return; // CMPPZ
+            case 0b0000_0001_0001:
+                CompareOps.CmpPz(Context);
+                return; // CMPPZ
             case 0b0000_0001_0010: break; // STSMMACL
             case 0b0000_0001_0011: break; // STCMGBR
-            case 0b0000_0001_0101: CompareOps.CmpPl(Context); return; // CMPPL
-            case 0b0000_0001_1000: ShiftOps.Shll8(Context); return; // SHLL8
-            case 0b0000_0001_1001: ShiftOps.Shlr8(Context); return; // SHLR8
+            case 0b0000_0001_0101:
+                CompareOps.CmpPl(Context);
+                return; // CMPPL
+            case 0b0000_0001_1000:
+                ShiftOps.Shll8(Context);
+                return; // SHLL8
+            case 0b0000_0001_1001:
+                ShiftOps.Shlr8(Context);
+                return; // SHLR8
             case 0b0000_0001_1011: break; // TAS
-            case 0b0000_0010_0000: ShiftOps.Shal(Context); return; // SHAL
-            case 0b0000_0010_0001: ShiftOps.Shar(Context); return; // SHAR
+            case 0b0000_0010_0000:
+                ShiftOps.Shal(Context);
+                return; // SHAL
+            case 0b0000_0010_0001:
+                ShiftOps.Shar(Context);
+                return; // SHAR
             case 0b0000_0010_0010: break; // STSMPR
             case 0b0000_0010_0011: break; // STCMVBR
-            case 0b0000_0010_0100: ShiftOps.Rotcl(Context); return; // ROTCL
-            case 0b0000_0010_0101: ShiftOps.Rotcr(Context); return; // ROTCR
-            case 0b0000_0010_1000: ShiftOps.Shll16(Context); return; // SHLL16
-            case 0b0000_0010_1001: ShiftOps.Shlr16(Context); return; // SHLR16
+            case 0b0000_0010_0100:
+                ShiftOps.Rotcl(Context);
+                return; // ROTCL
+            case 0b0000_0010_0101:
+                ShiftOps.Rotcr(Context);
+                return; // ROTCR
+            case 0b0000_0010_1000:
+                ShiftOps.Shll16(Context);
+                return; // SHLL16
+            case 0b0000_0010_1001:
+                ShiftOps.Shlr16(Context);
+                return; // SHLR16
             case 0b0000_0010_1011: break; // JMP
             case 0b0000_0011_0010: break; // STCMSGR
             case 0b0000_0011_0011: break; // STCMSSR
@@ -239,7 +271,7 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 }
                 else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1100) // SHAD nnnnmmmm1100
                 {
-                    ShiftOps.Shad(Context);  // SHAD
+                    ShiftOps.Shad(Context); // SHAD
                     return;
                 }
                 else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1101) // SHLD nnnnmmmm1101
@@ -267,6 +299,23 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(0))
         {
+            // EXTU.B Rm, Rn
+            case 0b1100:
+                ExtOps.Extub(Context);
+                return;
+            // EXTU.W Rm, Rn
+            case 0b1101:
+                ExtOps.Extuw(Context);
+                return;
+            // EXTS.B Rm, Rn
+            case 0b1110:
+                ExtOps.Extsb(Context);
+                return;
+            // EXTS.W Rm, Rn
+            case 0b1111:
+                ExtOps.Extsw(Context);
+                return;
+            // NOT Rm, Rn
             case 0b0111:
                 BitwiseOps.Not(Context);
                 return;
