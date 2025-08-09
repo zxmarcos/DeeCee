@@ -15,6 +15,8 @@ public unsafe struct Sh4CpuState
     public UInt32 VBR;
     public UInt32 SGR;
     public UInt32 DBR;
+    public UInt32 MACH;
+    public UInt32 MACL;
 
 
     public bool T

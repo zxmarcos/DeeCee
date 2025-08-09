@@ -9,7 +9,14 @@ public class Sh4EmitterContext : EmitterContext
         PC = 16,
         SR,
         GBR,
-        PR
+        PR,
+        SSR,
+        SPC,
+        VBR,
+        SGR,
+        DBR,
+        MACH,
+        MACL,
     };
     
     public Operand GetT()
@@ -37,32 +44,7 @@ public class Sh4EmitterContext : EmitterContext
     {
         SetSR(And(GetSR(), Constant(~2)));
     }
-
-    public Operand GetSR()
-    {
-        return GetReg((byte)RegConstants.SR);
-    }
     
-    public Operand GetGBR()
-    {
-        return GetReg((byte)RegConstants.GBR);
-    }
-
-    public void SetSR(Operand sr)
-    {
-        SetReg((byte)RegConstants.SR, sr);
-    }
-    
-    public Operand GetPC()
-    {
-        return GetReg((byte)RegConstants.PC);
-    }
-    
-    public void SetPC(Operand pc)
-    {
-        SetReg((byte)RegConstants.PC, pc);
-    }
-
     // op = 1
     public void SetOne(Operand op)
     {
@@ -74,13 +56,125 @@ public class Sh4EmitterContext : EmitterContext
         Store(op, Constant(0));
     }
     
+    
+    // --- PC (Program Counter) ---
+    public void SetPC(Operand pc)
+    {
+        SetReg((byte)RegConstants.PC, pc);
+    }
+
+    public Operand GetPC()
+    {
+        return GetReg((byte)RegConstants.PC);
+    }
+
+    // --- SR (Status Register) ---
+    public void SetSR(Operand sr)
+    {
+        SetReg((byte)RegConstants.SR, sr);
+    }
+
+    public Operand GetSR()
+    {
+        return GetReg((byte)RegConstants.SR);
+    }
+
+    // --- GBR (Global Base Register) ---
+    public void SetGBR(Operand gbr)
+    {
+        SetReg((byte)RegConstants.GBR, gbr);
+    }
+
+    public Operand GetGBR()
+    {
+        return GetReg((byte)RegConstants.GBR);
+    }
+
+    // --- PR (Procedure Register) ---
     public void SetPR(Operand pr)
     {
         SetReg((byte)RegConstants.PR, pr);
     }
-    
+
     public Operand GetPR()
     {
         return GetReg((byte)RegConstants.PR);
+    }
+
+    // --- SSR (Saved Status Register) ---
+    public void SetSSR(Operand ssr)
+    {
+        SetReg((byte)RegConstants.SSR, ssr);
+    }
+
+    public Operand GetSSR()
+    {
+        return GetReg((byte)RegConstants.SSR);
+    }
+
+    // --- SPC (Saved Program Counter) ---
+    public void SetSPC(Operand spc)
+    {
+        SetReg((byte)RegConstants.SPC, spc);
+    }
+
+    public Operand GetSPC()
+    {
+        return GetReg((byte)RegConstants.SPC);
+    }
+
+    // --- VBR (Vector Base Register) ---
+    public void SetVBR(Operand vbr)
+    {
+        SetReg((byte)RegConstants.VBR, vbr);
+    }
+
+    public Operand GetVBR()
+    {
+        return GetReg((byte)RegConstants.VBR);
+    }
+
+    // --- SGR (Saved General Register) ---
+    public void SetSGR(Operand sgr)
+    {
+        SetReg((byte)RegConstants.SGR, sgr);
+    }
+
+    public Operand GetSGR()
+    {
+        return GetReg((byte)RegConstants.SGR);
+    }
+
+    // --- DBR (Debug Base Register) ---
+    public void SetDBR(Operand dbr)
+    {
+        SetReg((byte)RegConstants.DBR, dbr);
+    }
+
+    public Operand GetDBR()
+    {
+        return GetReg((byte)RegConstants.DBR);
+    }
+
+    // --- MACH (Multiply and Accumulate High) ---
+    public void SetMACH(Operand mach)
+    {
+        SetReg((byte)RegConstants.MACH, mach);
+    }
+
+    public Operand GetMACH()
+    {
+        return GetReg((byte)RegConstants.MACH);
+    }
+
+    // --- MACL (Multiply and Accumulate Low) ---
+    public void SetMACL(Operand macl)
+    {
+        SetReg((byte)RegConstants.MACL, macl);
+    }
+
+    public Operand GetMACL()
+    {
+        return GetReg((byte)RegConstants.MACL);
     }
 }

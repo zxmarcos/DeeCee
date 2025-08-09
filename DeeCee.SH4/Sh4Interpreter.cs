@@ -14,26 +14,49 @@ public unsafe class Sh4Interpreter
         this._state = state;
     }
     
+    /// <summary>
+    /// Obtém o valor de um registrador específico.
+    /// </summary>
     UInt32 GetReg(byte regNum)
     {
+        // A expressão switch é uma forma moderna e concisa para o switch-case.
         return regNum switch
         {
-            (byte)Sh4EmitterContext.RegConstants.PC => _state->PC,
-            (byte)Sh4EmitterContext.RegConstants.PR => _state->PR,
-            (byte)Sh4EmitterContext.RegConstants.GBR => _state->GBR,
-            (byte)Sh4EmitterContext.RegConstants.SR => _state->SR,
+            (byte)Sh4EmitterContext.RegConstants.PC   => _state->PC,
+            (byte)Sh4EmitterContext.RegConstants.PR   => _state->PR,
+            (byte)Sh4EmitterContext.RegConstants.GBR  => _state->GBR,
+            (byte)Sh4EmitterContext.RegConstants.SR   => _state->SR,
+            (byte)Sh4EmitterContext.RegConstants.SSR  => _state->SSR,
+            (byte)Sh4EmitterContext.RegConstants.SPC  => _state->SPC,
+            (byte)Sh4EmitterContext.RegConstants.VBR  => _state->VBR,
+            (byte)Sh4EmitterContext.RegConstants.SGR  => _state->SGR,
+            (byte)Sh4EmitterContext.RegConstants.DBR  => _state->DBR,
+            (byte)Sh4EmitterContext.RegConstants.MACH => _state->MACH,
+            (byte)Sh4EmitterContext.RegConstants.MACL => _state->MACL,
+            // Caso padrão: para registradores de propósito geral (R0-R15)
             _ => _state->R[regNum]
         };
     }
 
+    /// <summary>
+    /// Define o valor de um registrador específico.
+    /// </summary>
     void SetReg(byte regNum, UInt32 value)
     {
         switch (regNum)
         {
-            case (byte)Sh4EmitterContext.RegConstants.PC: _state->PC = value; break;
-            case (byte)Sh4EmitterContext.RegConstants.PR: _state->PR = value; break;
-            case (byte)Sh4EmitterContext.RegConstants.GBR: _state->GBR = value; break;
-            case (byte)Sh4EmitterContext.RegConstants.SR: _state->SR = value; break;
+            case (byte)Sh4EmitterContext.RegConstants.PC:   _state->PC = value;   break;
+            case (byte)Sh4EmitterContext.RegConstants.PR:   _state->PR = value;   break;
+            case (byte)Sh4EmitterContext.RegConstants.GBR:  _state->GBR = value;  break;
+            case (byte)Sh4EmitterContext.RegConstants.SR:   _state->SR = value;   break;
+            case (byte)Sh4EmitterContext.RegConstants.SSR:  _state->SSR = value;  break;
+            case (byte)Sh4EmitterContext.RegConstants.SPC:  _state->SPC = value;  break;
+            case (byte)Sh4EmitterContext.RegConstants.VBR:  _state->VBR = value;  break;
+            case (byte)Sh4EmitterContext.RegConstants.SGR:  _state->SGR = value;  break;
+            case (byte)Sh4EmitterContext.RegConstants.DBR:  _state->DBR = value;  break;
+            case (byte)Sh4EmitterContext.RegConstants.MACH: _state->MACH = value; break;
+            case (byte)Sh4EmitterContext.RegConstants.MACL: _state->MACL = value; break;
+            // Caso padrão: para registradores de propósito geral (R0-R15)
             default: _state->R[regNum] = value; break;
         };
     }
@@ -132,37 +155,8 @@ public unsafe class Sh4Interpreter
                             break;
                         default:
                         {
-                            switch (instruction.Destiny.RegNum)
-                            {
-                                case (byte)Sh4EmitterContext.RegConstants.PC:
-                                {
-                                    var value = GetValue(instruction.A);
-                                    _state->PC = value;
-                                    break;
-                                }
-                                case (byte)Sh4EmitterContext.RegConstants.PR:
-                                {
-                                    var value = GetValue(instruction.A);
-                                    _state->PR = value;
-                                    break;
-                                }
-                                case (byte)Sh4EmitterContext.RegConstants.GBR:
-                                {
-                                    var value = GetValue(instruction.A);
-                                    _state->GBR = value;
-                                    break;
-                                }
-                                case (byte)Sh4EmitterContext.RegConstants.SR:
-                                {
-                                    var value = GetValue(instruction.A);
-                                    _state->SR = value;
-                                    break;
-                                }
-                                default:
-                                    _state->R[instruction.Destiny.RegNum] = GetValue(instruction.A);
-                                    break;
-                            }
-
+                            var value = GetValue(instruction.A);
+                            SetReg(instruction.Destiny.RegNum, value);
                             break;
                         }
                     }
