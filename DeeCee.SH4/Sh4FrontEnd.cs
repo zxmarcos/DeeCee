@@ -388,25 +388,25 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
             default:
                 // Verifica instruções com padrões especiais
-                if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_0000_0111) // LDCMRBANK mmmm1nnn0111
+                if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_1000_0111) // LDCMRBANK mmmm1nnn0111
                 {
                     // LDCMRBANK
                     ControlOps.LdcmRbank(Context);
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_0000_1110) // LDCRBANK mmmm1nnn1110
+                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_1000_1110) // LDCRBANK mmmm1nnn1110
                 {
                     // LDCRBANK
                     ControlOps.LdcRbank(Context);
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_0000_0011) // STCMRBANK nnnn1mmm0011
+                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_1000_0011) // STCMRBANK nnnn1mmm0011
                 {
                     // STCMRBANK
                     ControlOps.StcmRbank(Context);
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1100) // SHAD nnnnmmmm1100
+                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_1000_1100) // SHAD nnnnmmmm1100
                 {
                     ShiftOps.Shad(Context); // SHAD
                     return;
