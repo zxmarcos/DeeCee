@@ -228,6 +228,10 @@ public class Sh4FrontEnd : Sh4BaseCpu
             case 0b1100:
                 CompareOps.CmpStr(Context);
                 return;
+            // XTRCT Rm,Rn
+            case 0b1101:
+                DataOps.Xtrct(Context);
+                return;
         }
 
         throw new NotImplementedException();

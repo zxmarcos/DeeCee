@@ -20,4 +20,14 @@ public static class DataOps
         var lower = ir.ShiftRight(ir.And(mReg, ir.Constant(0xFFFF0000)), ir.Constant(16));
         ir.SetReg(ir.Op.N(), ir.Or(upper, lower));
     }
+    
+    public static void Xtrct(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        var nReg = ir.GetReg(ir.Op.M());
+        
+        var upper = ir.ShiftLeft(ir.And(mReg, ir.Constant(0xFFFF)), ir.Constant(16));
+        var lower = ir.ShiftRight(ir.And(nReg, ir.Constant(0xFFFF0000)), ir.Constant(16));
+        ir.SetReg(ir.Op.N(), ir.Or(upper, lower));
+    }
 }
