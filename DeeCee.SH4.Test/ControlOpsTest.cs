@@ -14,7 +14,7 @@
         {
             _state = new Sh4CpuState();
             _fe = new Sh4FrontEnd();
-            _memory = new TestMemory(0x4000);
+            _memory = new TestMemory(0x10000);
         }
 
         private void CompileInstruction(ushort instruction)

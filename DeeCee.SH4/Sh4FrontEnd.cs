@@ -98,69 +98,69 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 FlagOps.SetS(Context);
                 return;
 
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0000_0010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0010:
                 // STCSR
                 ControlOps.StcSr(Context); return;
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0000_0011:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0011:
                 // BSRF
                 BranchOps.Bsrf(Context);
                 return;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0000_1010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1010:
                 ControlOps.StsMach(Context); return;
                 // STSMACH
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0001_0010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0001_0010:
                 ControlOps.StcGbr(Context); return;
                 // STCGBR
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0001_1010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0001_1010:
                 ControlOps.StsMacl(Context); return;
                 // STSMACL
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_0010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_0010:
                 ControlOps.StcVbr(Context); return;
                 // STCVBR
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_0011:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_0011:
                 // BRAF
                 BranchOps.Braf(Context);
                 return;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_1001:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_1001:
                 // MOVT
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0010_1010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_1010:
                 ControlOps.StsPr(Context); return;
                 // STSPR
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0011_0010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0011_0010:
                 ControlOps.StcSsr(Context); return;
                 // STCSSR
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0011_1010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0011_1010:
                 ControlOps.StcSgr(Context); return;
                 // STCSGR
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_0100_0010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_0100_0010:
                 ControlOps.StcSpc(Context); return;
                 // STCSPC
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_1000_0011:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_1000_0011:
                 // PREF
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_1001_0011:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_1001_0011:
                 // OCBI
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_1010_0011:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_1010_0011:
                 // OCBP
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_1011_0011:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_1011_0011:
                 // OCBWB
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_1100_0011:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_1100_0011:
                 // MOVCAL
                 break;
-            case var v when (v & 0b0000_0000_1111) == 0b0000_1111_1010:
+            case var v when (v & 0b0000_1111_1111) == 0b0000_1111_1010:
                 ControlOps.StcDbr(Context); return;
                 // STCDBR
                 break;
