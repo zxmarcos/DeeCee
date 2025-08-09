@@ -30,4 +30,16 @@ public unsafe struct Sh4CpuState
         get => (SR & 2) != 0;
         set => SR = (SR & ~2U) | (value ? 2U: 0);
     }
+    
+    public bool Q
+    {
+        get => (SR & (1U << 8)) != 0;
+        set => SR = (SR & ~(1U << 8)) | (value ? (1U << 8): 0);
+    }
+    
+    public bool M
+    {
+        get => (SR & (1U << 9)) != 0;
+        set => SR = (SR & ~(1U << 9)) | (value ? (1U << 9): 0);
+    }
 }
