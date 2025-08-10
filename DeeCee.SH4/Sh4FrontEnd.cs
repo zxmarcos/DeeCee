@@ -56,151 +56,151 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0000()
     {
-        var opcode = (ushort)(Context.Op.Value & 0xFFF);
+        var opcode = (ushort)(Context.Op.Value & 0xFF);
         switch (opcode)
         {
-            case 0b0000_0000_1000:
+            case 0b0000_1000:
                 // CLRT
                 FlagOps.ClrT(Context);
                 return;
-            case 0b0000_0000_1001:
+            case 0b0000_1001:
                 // NOP
                 return;
-            case 0b0000_0000_1011:
+            case 0b0000_1011:
                 // RTS
                 BranchOps.Rts(Context);
                 return;
-            case 0b0000_0001_1000:
+            case 0b0001_1000:
                 // SETT
                 FlagOps.SetT(Context);
                 return;
-            case 0b0000_0001_1001:
+            case 0b0001_1001:
                 // DIV0U
                 break;
-            case 0b0000_0001_1011:
+            case 0b0001_1011:
                 // SLEEP
                 break;
-            case 0b0000_0010_1000:
+            case 0b0010_1000:
                 // CLRMAC
                 ArithmeticOps.ClrMac(Context);
                 return;
-            case 0b0000_0010_1011:
+            case 0b0010_1011:
                 // RTE
                 break;
-            case 0b0000_0011_1000:
+            case 0b0011_1000:
                 // LDTLB
                 break;
-            case 0b0000_0100_1000:
+            case 0b0100_1000:
                 // CLRS
                 FlagOps.ClrS(Context);
                 return;
-            case 0b0000_0101_1000:
+            case 0b0101_1000:
                 // SETS
                 FlagOps.SetS(Context);
                 return;
 
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0010:
+            case var v when (v & 0b1111_1111) == 0b0000_0010:
                 // STCSR
                 ControlOps.StcSr(Context); return;
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0011:
+            case var v when (v & 0b1111_1111) == 0b0000_0011:
                 // BSRF
                 BranchOps.Bsrf(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1010:
+            case var v when (v & 0b1111_1111) == 0b0000_1010:
                 ControlOps.StsMach(Context); return;
                 // STSMACH
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0001_0010:
+            case var v when (v & 0b1111_1111) == 0b0001_0010:
                 ControlOps.StcGbr(Context); return;
                 // STCGBR
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0001_1010:
+            case var v when (v & 0b1111_1111) == 0b0001_1010:
                 ControlOps.StsMacl(Context); return;
                 // STSMACL
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_0010:
+            case var v when (v & 0b1111_1111) == 0b0010_0010:
                 ControlOps.StcVbr(Context); return;
                 // STCVBR
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_0011:
+            case var v when (v & 0b1111_1111) == 0b0010_0011:
                 // BRAF
                 BranchOps.Braf(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_1001:
+            case var v when (v & 0b1111_1111) == 0b0010_1001:
                 // MOVT
                 DataOps.MovT(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0010_1010:
+            case var v when (v & 0b1111_1111) == 0b0010_1010:
                 ControlOps.StsPr(Context); return;
                 // STSPR
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0011_0010:
+            case var v when (v & 0b1111_1111) == 0b0011_0010:
                 ControlOps.StcSsr(Context); return;
                 // STCSSR
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0011_1010:
+            case var v when (v & 0b1111_1111) == 0b0011_1010:
                 ControlOps.StcSgr(Context); return;
                 // STCSGR
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0100_0010:
+            case var v when (v & 0b1111_1111) == 0b0100_0010:
                 ControlOps.StcSpc(Context); return;
                 // STCSPC
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_1000_0011:
+            case var v when (v & 0b1111_1111) == 0b1000_0011:
                 // PREF
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_1001_0011:
+            case var v when (v & 0b1111_1111) == 0b1001_0011:
                 // OCBI
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_1010_0011:
+            case var v when (v & 0b1111_1111) == 0b1010_0011:
                 // OCBP
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_1011_0011:
+            case var v when (v & 0b1111_1111) == 0b1011_0011:
                 // OCBWB
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_1100_0011:
+            case var v when (v & 0b1111_1111) == 0b1100_0011:
                 // MOVCAL
                 DataOps.MovCal(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_1111_1010:
+            case var v when (v & 0b1111_1111) == 0b1111_1010:
                 ControlOps.StcDbr(Context);
                 // STCDBR
                 return;
 
-            case var v when (v & 0b0000_1000_1111) == 0b0000_1000_0010:
+            case var v when (v & 0b1000_1111) == 0b1000_0010:
                 ControlOps.StcRbank(Context);
                 // STCRBANK
                 return;
 
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0100:
-                // MOVBS_IDX
+            case var v when (v & 0b1111_1111) == 0b0000_0100:
+                // MOV.B Rm,@Rn
                 DataOps.MovBs(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0101:
-                // MOVWS_IDX
+            case var v when (v & 0b1111_1111) == 0b0000_0101:
+                // MOV.W Rm,@Rn
                 DataOps.MovWs(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0110:
-                // MOVLS_IDX
+            case var v when (v & 0b1111_1111) == 0b0000_0110:
+                // MOV.L Rm,@Rn
                 DataOps.MovLs(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0111:
+            case var v when (v & 0b1111_1111) == 0b0000_0111:
                 // MULL
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1100:
-                // MOVBL_IDX
+            case var v when (v & 0b1111_1111) == 0b0000_1100:
+                // MOV.B @Rm,Rn
                 DataOps.MovBl(Context);
                 return;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1101:
-                // MOVWL_IDX
+            case var v when (v & 0b1111_1111) == 0b0000_1101:
+                // MOV.W @Rm,Rn
                 DataOps.MovWl(Context);
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1110:
-                // MOVLL_IDX
+            case var v when (v & 0b1111_1111) == 0b0000_1110:
+                // MOV.L @Rm,Rn
                 DataOps.MovLl(Context);
                 break;
-            case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1111:
+            case var v when (v & 0b1111_1111) == 0b0000_1111:
                 // MACL
                 break;
         }
@@ -329,129 +329,134 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0100()
     {
-        switch (Context.Op.Value & 0b0000_1111_1111)
+        switch (Context.Op.Value & 0b1111_1111)
         {
             // Instruções com prefixo mmmm
-            case 0b0000_0000_0110: ControlOps.LdsmMach(Context); return; // LDSMMACH
-            case 0b0000_0000_0111: ControlOps.LdcmSr(Context); return; // LDCMSR
-            case 0b0000_0000_1010: ControlOps.LdsMach(Context); return; // LDSMACH
-            case 0b0000_0000_1110: ControlOps.LdcSr(Context); return; // LDCSR
-            case 0b0000_0001_0110: ControlOps.LdsmMacl(Context); return; // LDSMMACL
-            case 0b0000_0001_0111: ControlOps.LdcmGbr(Context); return; // LDCMGBR
-            case 0b0000_0001_1010: ControlOps.LdsMacl(Context); return; // LDSMACL
-            case 0b0000_0001_1110: ControlOps.LdcGbr(Context); return; // LDCGBR
-            case 0b0000_0010_0110: ControlOps.LdsmPr(Context); return; // LDSMPR
-            case 0b0000_0010_0111: ControlOps.LdcmVbr(Context); return; // LDCMVBR
-            case 0b0000_0010_1010: ControlOps.LdsPr(Context); return; // LDSPR
-            case 0b0000_0010_1110: ControlOps.LdcVbr(Context); return; // LDCVBR
-            case 0b0000_0011_0111: ControlOps.LdcmSsr(Context); return; // LDCMSSR
-            case 0b0000_0011_1110: ControlOps.LdcSsr(Context); return; // LDCSSR
-            case 0b0000_0100_0111: ControlOps.LdcmSpc(Context); return; // LDCMSPC
-            case 0b0000_0100_1110: ControlOps.LdcSpc(Context); return; // LDCSPC
-            case 0b0000_1111_0110: ControlOps.LdcmDbr(Context); return; // LDCMDBR
-            case 0b0000_1111_1010: ControlOps.LdcDbr(Context); return; // LDCDBR
+            case 0b0000_0110: ControlOps.LdsmMach(Context); return; // LDSMMACH
+            case 0b0000_0111: ControlOps.LdcmSr(Context); return; // LDCMSR
+            case 0b0000_1010: ControlOps.LdsMach(Context); return; // LDSMACH
+            case 0b0000_1110: ControlOps.LdcSr(Context); return; // LDCSR
+            case 0b0001_0110: ControlOps.LdsmMacl(Context); return; // LDSMMACL
+            case 0b0001_0111: ControlOps.LdcmGbr(Context); return; // LDCMGBR
+            case 0b0001_1010: ControlOps.LdsMacl(Context); return; // LDSMACL
+            case 0b0001_1110: ControlOps.LdcGbr(Context); return; // LDCGBR
+            case 0b0010_0110: ControlOps.LdsmPr(Context); return; // LDSMPR
+            case 0b0010_0111: ControlOps.LdcmVbr(Context); return; // LDCMVBR
+            case 0b0010_1010: ControlOps.LdsPr(Context); return; // LDSPR
+            case 0b0010_1110: ControlOps.LdcVbr(Context); return; // LDCVBR
+            case 0b0011_0111: ControlOps.LdcmSsr(Context); return; // LDCMSSR
+            case 0b0011_1110: ControlOps.LdcSsr(Context); return; // LDCSSR
+            case 0b0100_0111: ControlOps.LdcmSpc(Context); return; // LDCMSPC
+            case 0b0100_1110: ControlOps.LdcSpc(Context); return; // LDCSPC
+            case 0b1111_0110: ControlOps.LdcmDbr(Context); return; // LDCMDBR
+            case 0b1111_1010: ControlOps.LdcDbr(Context); return; // LDCDBR
 
             // Instruções com prefixo nnnn
-            case 0b0000_0000_0000:
+            case 0b0000_0000:
                 ShiftOps.Shll(Context);
                 return; // SHLL
-            case 0b0000_0000_0001:
+            case 0b0000_0001:
                 ShiftOps.Shlr(Context);
                 return; // SHLR
-            case 0b0000_0000_0010: ControlOps.StsmMach(Context); return; // STSMMACH
-            case 0b0000_0000_0011: ControlOps.StcmSr(Context); return; // STCMSR
-            case 0b0000_0000_0100:
+            case 0b0000_0010: ControlOps.StsmMach(Context); return; // STSMMACH
+            case 0b0000_0011: ControlOps.StcmSr(Context); return; // STCMSR
+            case 0b0000_0100:
                 ShiftOps.Rotl(Context);
                 return; // ROTL
-            case 0b0000_0000_0101:
+            case 0b0000_0101:
                 ShiftOps.Rotr(Context);
                 return; // ROTR
-            case 0b0000_0000_1000:
+            case 0b0000_1000:
                 ShiftOps.Shll2(Context);
                 return; // SHLL2
-            case 0b0000_0000_1001:
+            case 0b0000_1001:
                 ShiftOps.Shlr2(Context);
                 return; // SHLR2
-            case 0b0000_0000_1011:
+            case 0b0000_1011:
                 BranchOps.Jsr(Context);
                 return; // JSR
-            case 0b0000_0001_0000:
+            case 0b0001_0000:
                 ArithmeticOps.Dt(Context);
                 return; // DT
-            case 0b0000_0001_0001:
+            case 0b0001_0001:
                 CompareOps.CmpPz(Context);
                 return; // CMPPZ
-            case 0b0000_0001_0010: ControlOps.StsmMacl(Context); return; // STSMMACL
-            case 0b0000_0001_0011: ControlOps.StcmGbr(Context); return; // STCMGBR
-            case 0b0000_0001_0101:
+            case 0b0001_0010: ControlOps.StsmMacl(Context); return; // STSMMACL
+            case 0b0001_0011: ControlOps.StcmGbr(Context); return; // STCMGBR
+            case 0b0001_0101:
                 CompareOps.CmpPl(Context);
                 return; // CMPPL
-            case 0b0000_0001_1000:
+            case 0b0001_1000:
                 ShiftOps.Shll8(Context);
                 return; // SHLL8
-            case 0b0000_0001_1001:
+            case 0b0001_1001:
                 ShiftOps.Shlr8(Context);
                 return; // SHLR8
-            case 0b0000_0001_1011: break; // TAS
-            case 0b0000_0010_0000:
+            case 0b0001_1011: break; // TAS
+            case 0b0010_0000:
                 ShiftOps.Shal(Context);
                 return; // SHAL
-            case 0b0000_0010_0001:
+            case 0b0010_0001:
                 ShiftOps.Shar(Context);
                 return; // SHAR
-            case 0b0000_0010_0010: ControlOps.StsmPr(Context); return; // STSMPR
-            case 0b0000_0010_0011: ControlOps.StcmVbr(Context); return; // STCMVBR
-            case 0b0000_0010_0100:
+            case 0b0010_0010: ControlOps.StsmPr(Context); return; // STSMPR
+            case 0b0010_0011: ControlOps.StcmVbr(Context); return; // STCMVBR
+            case 0b0010_0100:
                 ShiftOps.Rotcl(Context);
                 return; // ROTCL
-            case 0b0000_0010_0101:
+            case 0b0010_0101:
                 ShiftOps.Rotcr(Context);
                 return; // ROTCR
-            case 0b0000_0010_1000:
+            case 0b0010_1000:
                 ShiftOps.Shll16(Context);
                 return; // SHLL16
-            case 0b0000_0010_1001:
+            case 0b0010_1001:
                 ShiftOps.Shlr16(Context);
                 return; // SHLR16
-            case 0b0000_0010_1011:
+            case 0b0010_1011:
                 BranchOps.Jmp(Context);
                 return; // JMP
-            case 0b0000_0011_0010: ControlOps.StcmSgr(Context); return; // STCMSGR
-            case 0b0000_0011_0011: ControlOps.StcmSsr(Context); return; // STCMSSR
-            case 0b0000_0100_0011: ControlOps.StcmSpc(Context); return; // STCMSPC
-            case 0b0000_1111_0010: ControlOps.StcmDbr(Context); return; // STCMDBR
+            case 0b0011_0010: ControlOps.StcmSgr(Context); return; // STCMSGR
+            case 0b0011_0011: ControlOps.StcmSsr(Context); return; // STCMSSR
+            case 0b0100_0011: ControlOps.StcmSpc(Context); return; // STCMSPC
+            case 0b1111_0010: ControlOps.StcmDbr(Context); return; // STCMDBR
 
             default:
                 // Verifica instruções com padrões especiais
-                if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_1000_0111) // LDCMRBANK mmmm1nnn0111
+                if ((Context.Op.Value & 0b1000_1111) == 0b1000_0111) // LDCMRBANK mmmm1nnn0111
                 {
                     // LDCMRBANK
                     ControlOps.LdcmRbank(Context);
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_1000_1110) // LDCRBANK mmmm1nnn1110
+
+                if ((Context.Op.Value & 0b1000_1111) == 0b1000_1110) // LDCRBANK mmmm1nnn1110
                 {
                     // LDCRBANK
                     ControlOps.LdcRbank(Context);
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_1000_1111) == 0b0000_1000_0011) // STCMRBANK nnnn1mmm0011
+
+                if ((Context.Op.Value & 0b1000_1111) == 0b1000_0011) // STCMRBANK nnnn1mmm0011
                 {
                     // STCMRBANK
                     ControlOps.StcmRbank(Context);
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_1000_1100) // SHAD nnnnmmmm1100
+
+                if ((Context.Op.Value & 0b0000_1111) == 0b0000_1100) // SHAD nnnnmmmm1100
                 {
                     ShiftOps.Shad(Context); // SHAD
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1101) // SHLD nnnnmmmm1101
+
+                if ((Context.Op.Value & 0b0000_1111) == 0b0000_1101) // SHLD nnnnmmmm1101
                 {
                     ShiftOps.Shld(Context); // SHLD
                     return;
                 }
-                else if ((Context.Op.Value & 0b0000_0000_1111) == 0b0000_0000_1111) // MACW nnnnmmmm1111
+
+                if ((Context.Op.Value & 0b0000_1111) == 0b0000_1111) // MACW nnnnmmmm1111
                 {
                     // MACW
                 }
