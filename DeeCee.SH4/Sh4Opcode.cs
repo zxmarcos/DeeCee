@@ -26,4 +26,7 @@ public struct Sh4Opcode
     
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte Imm8() => (byte)(Value & 0xFF);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public byte Imm4() => (byte)(Value & 0xF);
 }
