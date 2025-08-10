@@ -129,7 +129,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 return;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0010_1001:
                 // MOVT
-                break;
+                DataOps.MovT(Context);
+                return;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0010_1010:
                 ControlOps.StsPr(Context); return;
                 // STSPR
@@ -160,7 +161,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
                 break;
             case var v when (v & 0b0000_1111_1111) == 0b0000_1100_0011:
                 // MOVCAL
-                break;
+                DataOps.MovCal(Context);
+                return;
             case var v when (v & 0b0000_1111_1111) == 0b0000_1111_1010:
                 ControlOps.StcDbr(Context);
                 // STCDBR
@@ -173,24 +175,30 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0100:
                 // MOVBS_IDX
-                break;
+                DataOps.MovBs(Context);
+                return;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0101:
                 // MOVWS_IDX
-                break;
+                DataOps.MovWs(Context);
+                return;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0110:
                 // MOVLS_IDX
-                break;
+                DataOps.MovLs(Context);
+                return;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_0111:
                 // MULL
                 break;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1100:
                 // MOVBL_IDX
-                break;
+                DataOps.MovBl(Context);
+                return;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1101:
                 // MOVWL_IDX
+                DataOps.MovWl(Context);
                 break;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1110:
                 // MOVLL_IDX
+                DataOps.MovLl(Context);
                 break;
             case var v when (v & 0b0000_1111_1111) == 0b0000_0000_1111:
                 // MACL
@@ -202,13 +210,40 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0001()
     {
-        throw new NotImplementedException();
+        // MOV.L Rm, (@disp:4,Rn)
+        DataOps.MovLs4(Context);
     }
 
     private void Op0010()
     {
         switch (Context.Op.Part(0))
         {
+            // MOV.B Rm, @Rn
+            case 0b0000:
+                DataOps.MovBs(Context);
+                return;
+            // MOV.W Rm, @Rn
+            case 0b0001:
+                DataOps.MovWs(Context);
+                return;
+            // MOV.L Rm, @Rn
+            case 0b0010:
+                DataOps.MovLs(Context);
+                return;
+            
+            // MOV.B Rm, @-Rn
+            case 0b0100:
+                DataOps.MovBm(Context);
+                return;
+            // MOV.W Rm, @-Rn
+            case 0b0101:
+                DataOps.MovWm(Context);
+                return;
+            // MOV.L Rm, @-Rn
+            case 0b0110:
+                DataOps.MovLm(Context);
+                return;
+            
             // AND Rm,Rn
             case 0b1001:
                 BitwiseOps.And(Context);
@@ -429,13 +464,44 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op0101()
     {
-        throw new NotImplementedException();
+        // MOV.L @(disp:4,Rm), Rn
+        DataOps.MovLl4(Context);
     }
 
     private void Op0110()
     {
         switch (Context.Op.Part(0))
         {
+            // MOV.B @Rm, Rn
+            case 0b0000:
+                DataOps.MovBl(Context);
+                return;
+            // MOV.W @Rm, Rn
+            case 0b0001:
+                DataOps.MovWl(Context);
+                return;
+            // MOV.L @Rm, Rn
+            case 0b0010:
+                DataOps.MovLl(Context);
+                return;
+            // MOV Rm, Rn
+            case 0b0011:
+                DataOps.Mov(Context);
+                return;
+            
+            // MOV.B @Rm+, Rn
+            case 0b0100:
+                DataOps.MovBp(Context);
+                return;
+            // MOV.W @Rm+, Rn
+            case 0b0101:
+                DataOps.MovWp(Context);
+                return;
+            // MOV.L @Rm+, Rn
+            case 0b0110:
+                DataOps.MovLp(Context);
+                return;
+            
             // NEGC Rm, Rn
             case 0b1010:
                 ArithmeticOps.NegC(Context);
@@ -488,6 +554,23 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(2))
         {
+            // MOV.B R0, @(disp:4,Rm)
+            case 0b0000:
+                DataOps.MovBs4(Context);
+                return;
+            // MOV.W R0, @(disp:4,Rm)
+            case 0b0001:
+                DataOps.MovWs4(Context);
+                return;
+            // MOV.B @(disp:4,Rm),R0
+            case 0b0100:
+                DataOps.MovBl4(Context);
+                return;
+            // MOV.W @(disp:4,Rm),R0
+            case 0b0101:
+                DataOps.MovWl4(Context);
+                return;
+            
             // CMP/EQ #imm,R0
             case 0b1000:
                 CompareOps.CmpEqI(Context);
@@ -515,7 +598,8 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op1001()
     {
-        throw new NotImplementedException();
+        // MOV.W @(disp:8,PC), Rn
+        DataOps.MovWi(Context);
     }
 
     private void Op1010()
@@ -534,6 +618,36 @@ public class Sh4FrontEnd : Sh4BaseCpu
     {
         switch (Context.Op.Part(2))
         {
+            // MOV.B R0, @(disp:8,gbr)
+            case 0b0000:
+                DataOps.MovBsg(Context);
+                return;
+            // MOV.W R0, @(disp:8,gbr)
+            case 0b0001:
+                DataOps.MovWsg(Context);
+                return;
+            // MOV.L R0, @(disp:8,gbr)
+            case 0b0010:
+                DataOps.MovLsg(Context);
+                return;
+            // MOV.B @(disp:8,gbr),R0
+            case 0b0100:
+                DataOps.MovBlg(Context);
+                return;
+            // MOV.W @(disp:8,gbr),R0
+            case 0b0101:
+                DataOps.MovWlg(Context);
+                return;
+            // MOV.L @(disp:8,gbr),R0
+            case 0b0110:
+                DataOps.MovLlg(Context);
+                return;
+            
+            // MOVA (disp:8,PC),R0
+            case 0b0111:
+                DataOps.MovA(Context);
+                return;
+            
             // AND #imm,R0
             case 0b1001:
                 BitwiseOps.AndI(Context);
@@ -574,12 +688,14 @@ public class Sh4FrontEnd : Sh4BaseCpu
 
     private void Op1101()
     {
-        throw new NotImplementedException();
+        // MOV.L @(disp:8,PC), Rn
+        DataOps.MovLi(Context);
     }
 
     private void Op1110()
     {
-        throw new NotImplementedException();
+        // MOV #Imm8, Rn
+        DataOps.MovI(Context);
     }
 
     private void Op1111()

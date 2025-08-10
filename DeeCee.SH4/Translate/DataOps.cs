@@ -242,7 +242,7 @@ public static class DataOps
         ir.SetReg(0, data);
     }
     
-    /* MOV.B @(disp,GBR),R0 */
+    /* MOV.B R0,@(disp,GBR) */
     public static void MovBsg(Sh4EmitterContext ir)
     {
         var addr = ir.Add(ir.GetGBR(), ir.Constant(ir.Op.Imm8()));
@@ -250,7 +250,7 @@ public static class DataOps
         ir.Store(ea, ir.GetReg(0));
     }
     
-    /* MOV.W @(disp,GBR),R0 */
+    /* MOV.W R0,@(disp,GBR) */
     public static void MovWsg(Sh4EmitterContext ir)
     {
         var addr = ir.Add(ir.GetGBR(), ir.Constant(ir.Op.Imm8() * 2));
@@ -258,7 +258,7 @@ public static class DataOps
         ir.Store(ea, ir.GetReg(0));
     }
     
-    /* MOV.L @(disp,GBR),R0 */
+    /* MOV.L R0,@(disp,GBR) */
     public static void MovLsg(Sh4EmitterContext ir)
     {
         var addr = ir.Add(ir.GetGBR(), ir.Constant(ir.Op.Imm8() * 4));
@@ -363,5 +363,10 @@ public static class DataOps
         var upper = ir.ShiftLeft(ir.And(mReg, ir.Constant(0xFFFF)), ir.Constant(16));
         var lower = ir.ShiftRight(ir.And(nReg, ir.Constant(0xFFFF0000)), ir.Constant(16));
         ir.SetReg(ir.Op.N(), ir.Or(upper, lower));
+    }
+
+    public static void MovCal(Sh4EmitterContext context)
+    {
+        throw new NotImplementedException();
     }
 }
