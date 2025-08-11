@@ -6,6 +6,16 @@ public class Memory : IMemory
     private const int PageSize = 1 << PageShift;
     private const int PageMask = PageSize - 1;
     private const int MaxHandler = 32;
+    
+    // Constantes para tipos de mapeamento
+    [Flags]
+    public enum MapType
+    {
+        None = 0,
+        Read = 1,
+        Write = 2,
+        ReadWrite = Read | Write
+    }
 
     private delegate byte MemoryRead8Handler(UInt32 address);
 
@@ -60,6 +70,97 @@ public class Memory : IMemory
         _write32 = new MemoryWrite32Handler[MaxHandler];
         _write64 = new MemoryWrite64Handler[MaxHandler];
     }
+    
+    // Método para mapear memória diretamente de um ponteiro
+    public unsafe int MapMemory(void* pMemory, UInt32 startAddress, UInt32 endAddress, MapType mapType)
+    {
+        if (pMemory == null)
+            return -1;
+        
+        if (startAddress > endAddress)
+            return -1;
+
+        // Calcula a página inicial e final
+        var startPage = startAddress >> PageShift;
+        var endPage = endAddress >> PageShift;
+        var maxPages = (endPage - startPage) + 1;
+
+        // Ponteiro base da memória
+        var basePtr = new UIntPtr(pMemory);
+
+        // Mapeia as páginas
+        for (UInt32 i = 0; i < maxPages; i++)
+        {
+            var currentPage = startPage + i;
+            var pageOffset = PageSize * i;
+            var pagePtr = new UIntPtr((byte*)pMemory + pageOffset);
+
+            // Mapeia para leitura se solicitado
+            if ((mapType & MapType.Read) != 0)
+            {
+                _memoryMap[ReadMap8][currentPage] = pagePtr;
+                _memoryMap[ReadMap16][currentPage] = pagePtr;
+                _memoryMap[ReadMap32][currentPage] = pagePtr;
+                _memoryMap[ReadMap64][currentPage] = pagePtr;
+            }
+
+            // Mapeia para escrita se solicitado
+            if ((mapType & MapType.Write) != 0)
+            {
+                _memoryMap[WriteMap8][currentPage] = pagePtr;
+                _memoryMap[WriteMap16][currentPage] = pagePtr;
+                _memoryMap[WriteMap32][currentPage] = pagePtr;
+                _memoryMap[WriteMap64][currentPage] = pagePtr;
+            }
+        }
+
+        return 0; // Sucesso
+    }
+
+    // Método sobrecarregado para aceitar IntPtr (mais comum em C#)
+    public int MapMemory(IntPtr pMemory, UInt32 startAddress, UInt32 endAddress, MapType mapType)
+    {
+        unsafe
+        {
+            return MapMemory(pMemory.ToPointer(), startAddress, endAddress, mapType);
+        }
+    }
+
+    // Método para desmapear uma região de memória
+    public int UnmapMemory(UInt32 startAddress, UInt32 endAddress, MapType mapType)
+    {
+        if (startAddress > endAddress)
+            return -1;
+
+        var startPage = startAddress >> PageShift;
+        var endPage = endAddress >> PageShift;
+        var maxPages = (endPage - startPage) + 1;
+
+        for (UInt32 i = 0; i < maxPages; i++)
+        {
+            var currentPage = startPage + i;
+
+            // Desmapeia leitura se solicitado
+            if ((mapType & MapType.Read) != 0)
+            {
+                _memoryMap[ReadMap8][currentPage] = UIntPtr.Zero;
+                _memoryMap[ReadMap16][currentPage] = UIntPtr.Zero;
+                _memoryMap[ReadMap32][currentPage] = UIntPtr.Zero;
+                _memoryMap[ReadMap64][currentPage] = UIntPtr.Zero;
+            }
+
+            // Desmapeia escrita se solicitado
+            if ((mapType & MapType.Write) != 0)
+            {
+                _memoryMap[WriteMap8][currentPage] = UIntPtr.Zero;
+                _memoryMap[WriteMap16][currentPage] = UIntPtr.Zero;
+                _memoryMap[WriteMap32][currentPage] = UIntPtr.Zero;
+                _memoryMap[WriteMap64][currentPage] = UIntPtr.Zero;
+            }
+        }
+
+        return 0;
+    }
 
     public unsafe byte Read8(UInt32 address)
     {
@@ -79,7 +180,7 @@ public class Memory : IMemory
     public unsafe UInt16 Read16(UInt32 address)
     {
         var map = _memoryMap[ReadMap16];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_read16[idx] != null)
@@ -94,7 +195,7 @@ public class Memory : IMemory
     public unsafe UInt32 Read32(UInt32 address)
     {
         var map = _memoryMap[ReadMap32];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_read32[idx] != null)
@@ -109,7 +210,7 @@ public class Memory : IMemory
     public unsafe UInt64 Read64(UInt32 address)
     {
         var map = _memoryMap[ReadMap64];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_read64[idx] != null)
@@ -124,7 +225,7 @@ public class Memory : IMemory
     public unsafe void Write8(UInt32 address, byte value)
     {
         var map = _memoryMap[WriteMap8];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_write8[idx] != null)
@@ -139,7 +240,7 @@ public class Memory : IMemory
     public unsafe void Write16(UInt32 address, UInt16 value)
     {
         var map = _memoryMap[WriteMap16];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_write16[idx] != null)
@@ -154,7 +255,7 @@ public class Memory : IMemory
     public unsafe void Write32(UInt32 address, UInt32 value)
     {
         var map = _memoryMap[WriteMap32];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_write32[idx] != null)
@@ -169,7 +270,7 @@ public class Memory : IMemory
     public unsafe void Write64(UInt32 address, UInt64 value)
     {
         var map = _memoryMap[WriteMap64];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_write64[idx] != null)
