@@ -172,7 +172,7 @@ public unsafe class Sh4Interpreter
                 {
                     Debug.Assert(instruction.Destiny != null, "instruction.Destiny != null");
                     var address = GetValue(instruction.A.Address);
-                    Console.WriteLine($"LoadMemory {instruction.Destiny.Address} {address}");
+                    // Console.WriteLine($"LoadMemory {instruction.Destiny.Address} {address}");
                     switch (instruction.A.MemoryWidth)
                     {
                         case MemoryWidth.Byte:
