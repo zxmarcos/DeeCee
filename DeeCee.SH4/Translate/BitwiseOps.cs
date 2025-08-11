@@ -99,4 +99,13 @@ public static class BitwiseOps
         var result = ir.And(data, ir.Constant((UInt32)ir.Op.Imm8()));
         ir.If(ir.CompareEqual(result, ir.Constant(0)), ir.SetT, ir.ClearT);;
     }
+    
+    public static void Tas(Sh4EmitterContext ir)
+    {
+        var ea = ir.Memory(ir.GetReg(ir.Op.N()), MemoryWidth.Byte);
+        var data = ir.Load(ea);
+        ir.If(ir.CompareEqual(data, ir.Constant(0)), ir.SetT, ir.ClearT);
+        data = ir.Or(data, ir.Constant(0x80));
+        ir.Store(ea, data);
+    }
 }

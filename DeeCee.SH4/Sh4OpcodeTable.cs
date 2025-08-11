@@ -129,7 +129,7 @@ public class Sh4OpcodeTable
         Add(new InstructionMeta("0010nnnnmmmm1011", BitwiseOps.Or             ,"or rm, rn"));
         Add(new InstructionMeta("11001011iiiiiiii", BitwiseOps.OrI            ,"or #imm8, r0"));
         Add(new InstructionMeta("11001111iiiiiiii", BitwiseOps.OrB            ,"or.b #imm8, @(r0,gbr)"));
-        Add(new InstructionMeta("0100nnnn00011011", UnknownOps.Unimplemented  ,"tas.b @rn"));
+        Add(new InstructionMeta("0100nnnn00011011", BitwiseOps.Tas            ,"tas.b @rn"));
         Add(new InstructionMeta("0010nnnnmmmm1000", BitwiseOps.Tst            ,"tst rm, rn"));
         Add(new InstructionMeta("11001000iiiiiiii", BitwiseOps.TstI           ,"tst #imm8, r0"));
         Add(new InstructionMeta("11001100iiiiiiii", BitwiseOps.TstB           ,"tst.b #imm8, @(r0,gbr)"));
