@@ -28,7 +28,7 @@ namespace DeeCee.SH4.Test
         {
             fixed (Sh4CpuState* statePtr = &_state)
             {
-                var interpreter = new Sh4Interpreter(statePtr);
+                var interpreter = new Interpreter.Interpreter(statePtr);
                 setup();
                 interpreter.Execute(_fe.Context.Block);
                 assertion(_state);

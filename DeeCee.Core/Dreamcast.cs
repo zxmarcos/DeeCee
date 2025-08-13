@@ -1,5 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 using DeeCee.SH4;
+using DeeCee.SH4.Interpreter;
 
 namespace DeeCee.Core;
 
@@ -8,7 +9,7 @@ public unsafe class Dreamcast : IDisposable
     private Sh4CpuState _sh4State;
     private GCHandle _sh4StateHandle;
     private readonly Sh4FrontEnd _sh4FrontEnd;
-    private readonly Sh4Interpreter _sh4Interpreter;
+    private readonly Interpreter _sh4Interpreter;
     private readonly Memory _memory;
 
     private readonly MemoryBlock _rom;
@@ -36,7 +37,7 @@ public unsafe class Dreamcast : IDisposable
         
         _sh4Dasm = new SH4Dasm();
         _sh4FrontEnd = new Sh4FrontEnd();
-        _sh4Interpreter = new Sh4Interpreter((Sh4CpuState*)_sh4StateHandle.AddrOfPinnedObject());
+        _sh4Interpreter = new Interpreter((Sh4CpuState*)_sh4StateHandle.AddrOfPinnedObject());
         _sh4Interpreter.Memory = _memory;
 
         _sh4State.PC = 0x00000000;
