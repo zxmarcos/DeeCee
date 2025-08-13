@@ -18,25 +18,25 @@ public unsafe class Interpreter
     InterpValue GetReg(byte regNum)
     {
         if (regNum < 16)
-            return InterpValue.UInt32(_state->R[regNum]);
+            return InterpValue.FromUInt32(_state->R[regNum]);
         if (regNum < (byte)Sh4EmitterContext.RegConstants.RnBank)
         {
-            return InterpValue.UInt32(_state->RBank[regNum - 16]);
+            return InterpValue.FromUInt32(_state->RBank[regNum - 16]);
         }
 
         return (Sh4EmitterContext.RegConstants)regNum switch
         {
-            Sh4EmitterContext.RegConstants.PC => InterpValue.UInt32(_state->PC),
-            Sh4EmitterContext.RegConstants.SR => InterpValue.UInt32(_state->SR),
-            Sh4EmitterContext.RegConstants.GBR => InterpValue.UInt32(_state->GBR),
-            Sh4EmitterContext.RegConstants.PR => InterpValue.UInt32(_state->PR),
-            Sh4EmitterContext.RegConstants.SSR => InterpValue.UInt32(_state->SSR),
-            Sh4EmitterContext.RegConstants.SPC => InterpValue.UInt32(_state->SPC),
-            Sh4EmitterContext.RegConstants.VBR => InterpValue.UInt32(_state->VBR),
-            Sh4EmitterContext.RegConstants.SGR => InterpValue.UInt32(_state->SGR),
-            Sh4EmitterContext.RegConstants.DBR => InterpValue.UInt32(_state->DBR),
-            Sh4EmitterContext.RegConstants.MACH => InterpValue.UInt32(_state->MACH),
-            Sh4EmitterContext.RegConstants.MACL => InterpValue.UInt32(_state->MACL),
+            Sh4EmitterContext.RegConstants.PC => InterpValue.FromUInt32(_state->PC),
+            Sh4EmitterContext.RegConstants.SR => InterpValue.FromUInt32(_state->SR),
+            Sh4EmitterContext.RegConstants.GBR => InterpValue.FromUInt32(_state->GBR),
+            Sh4EmitterContext.RegConstants.PR => InterpValue.FromUInt32(_state->PR),
+            Sh4EmitterContext.RegConstants.SSR => InterpValue.FromUInt32(_state->SSR),
+            Sh4EmitterContext.RegConstants.SPC => InterpValue.FromUInt32(_state->SPC),
+            Sh4EmitterContext.RegConstants.VBR => InterpValue.FromUInt32(_state->VBR),
+            Sh4EmitterContext.RegConstants.SGR => InterpValue.FromUInt32(_state->SGR),
+            Sh4EmitterContext.RegConstants.DBR => InterpValue.FromUInt32(_state->DBR),
+            Sh4EmitterContext.RegConstants.MACH => InterpValue.FromUInt32(_state->MACH),
+            Sh4EmitterContext.RegConstants.MACL => InterpValue.FromUInt32(_state->MACL),
             _ => throw new ArgumentOutOfRangeException(nameof(regNum), regNum, null)
         };
     }
@@ -46,7 +46,7 @@ public unsafe class Interpreter
         if (value.Type != InterpValue.ValueType.UInt32 && value.Type != InterpValue.ValueType.Int32)
             throw new ArgumentException("O valor deve ser um UInt32");
         
-        UInt32 val = (UInt32)value.Value!;
+        UInt32 val = value.AsUInt32();
         if (regNum < 16)
         {
             _state->R[regNum] = val;
@@ -95,7 +95,7 @@ public unsafe class Interpreter
 
         if (operand.Kind == OperandKind.Constant)
         {
-            return InterpValue.UInt32(operand.UConst32);
+            return InterpValue.FromUInt32(operand.UConst32);
         }
 
         if (operand.Kind == OperandKind.LocalVariable)
@@ -105,10 +105,10 @@ public unsafe class Interpreter
 
         if (operand.Kind == OperandKind.Label)
         {
-            return InterpValue.Int32(operand.BlockOffset);
+            return InterpValue.FromInt32(operand.BlockOffset);
         }
 
-        return InterpValue.UInt32(0);
+        return InterpValue.FromUInt32(0);
     }
 
     void SetValue(Operand operand, InterpValue value)
@@ -251,28 +251,28 @@ public unsafe class Interpreter
     {
         var a = GetValue(instruction.A);
         Debug.Assert(a.IsInteger());
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)(sbyte)((UInt32)a.Value & 0xFF)));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32((UInt32)(sbyte)(a.AsUInt32() & 0xFF)));
     }
     
     private void OpSext16(Instruction instruction)
     {
         var a = GetValue(instruction.A);
         Debug.Assert(a.IsInteger());
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)(short)((UInt32)a.Value & 0xFFFF)));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32((UInt32)(short)(a.AsUInt32() & 0xFFFF)));
     }
     
     private void OpZext8(Instruction instruction)
     {
         var a = GetValue(instruction.A);
         Debug.Assert(a.IsInteger());
-        SetValue(instruction.Destiny, InterpValue.UInt32((byte)((UInt32)a.Value & 0xFF)));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32((byte)(a.AsUInt32() & 0xFF)));
     }
     
     private void OpZext16(Instruction instruction)
     {
         var a = GetValue(instruction.A);
         Debug.Assert(a.IsInteger());
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value & 0xFFFF));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() & 0xFFFF));
     }
 
     void OpAdd(Instruction instruction)
@@ -281,7 +281,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value + (UInt32)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() + b.AsUInt32()));
     }
     
     void OpSub(Instruction instruction)
@@ -290,7 +290,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value - (UInt32)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() - b.AsUInt32()));
     }
     
     void OpAnd(Instruction instruction)
@@ -299,7 +299,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value & (UInt32)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() & b.AsUInt32()));
     }
     
     void OpOr(Instruction instruction)
@@ -308,7 +308,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value | (UInt32)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() | b.AsUInt32()));
     }
     
     void OpXor(Instruction instruction)
@@ -317,7 +317,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value ^ (UInt32)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() ^ b.AsUInt32()));
     }
     
     void OpNot(Instruction instruction)
@@ -325,7 +325,7 @@ public unsafe class Interpreter
         var a = GetValue(instruction.A);
         Debug.Assert(a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32(~(UInt32)a.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(~a.AsUInt32()));
     }
     
     void OpShl(Instruction instruction)
@@ -334,7 +334,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value << (byte)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() << (byte)b.AsUInt32()));
     }
     
     void OpShr(Instruction instruction)
@@ -343,7 +343,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value >> (byte)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() >> (byte)b.AsUInt32()));
     }
     
     void OpSar(Instruction instruction)
@@ -352,7 +352,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)((Int32)a.Value) >> (byte)b.Value));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32((UInt32)(a.AsInt32() >> (byte)b.AsUInt32())));
     }
     
     void OpRol(Instruction instruction)
@@ -361,7 +361,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32(((UInt32)a.Value << (byte)b.Value) | ((UInt32)a.Value >> (32 - (byte)b.Value))));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32((a.AsUInt32() << (byte)b.AsUInt32()) | (a.AsUInt32() >> (32 - (byte)b.AsUInt32()))));
     }
     
     void OpRor(Instruction instruction)
@@ -370,7 +370,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32(((UInt32)a.Value >> (byte)b.Value) | ((UInt32)a.Value << (32 - (byte)b.Value))));
+        SetValue(instruction.Destiny, InterpValue.FromUInt32((a.AsUInt32() >> (byte)b.AsUInt32()) | (a.AsUInt32() << (32 - (byte)b.AsUInt32()))));
     }
     
     void OpCmpEq(Instruction instruction)
@@ -379,7 +379,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value == (UInt32)b.Value ? 1U : 0));;
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() == b.AsUInt32() ? 1U : 0));;
     }
     
     void OpCmpNe(Instruction instruction)
@@ -387,7 +387,7 @@ public unsafe class Interpreter
         var a = GetValue(instruction.A);
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value != (UInt32)b.Value ? 1U : 0));;
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() != b.AsUInt32() ? 1U : 0));;
     }
     
     void OpCmpGe(Instruction instruction)
@@ -396,7 +396,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value >= (UInt32)b.Value ? 1U : 0));;
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() >= b.AsUInt32() ? 1U : 0));;
     }
     
     void OpCmpLt(Instruction instruction)
@@ -405,7 +405,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value < (UInt32)b.Value ? 1U : 0));;
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() < b.AsUInt32() ? 1U : 0));;
     }
     
     void OpCmpGt(Instruction instruction)
@@ -414,7 +414,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        SetValue(instruction.Destiny, InterpValue.UInt32((UInt32)a.Value > (UInt32)b.Value ? 1U : 0));;
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsUInt32() > b.AsUInt32() ? 1U : 0));;
     }
     
     void OpCmpGtSign(Instruction instruction)
@@ -423,10 +423,7 @@ public unsafe class Interpreter
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
         
-        var av = (Int32)(uint)a.Value;
-        var bv = (Int32)(uint)b.Value;
-        
-        SetValue(instruction.Destiny, InterpValue.UInt32(av > bv ? 1U : 0));;
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsInt32() > b.AsInt32() ? 1U : 0));;
     }
     
     void OpCmpGeSign(Instruction instruction)
@@ -434,10 +431,8 @@ public unsafe class Interpreter
         var a = GetValue(instruction.A);
         var b = GetValue(instruction.B);
         Debug.Assert(b.IsInteger() && a.IsInteger());
-        
-        var av = (Int32)(uint)a.Value;
-        var bv = (Int32)(uint)b.Value;
-        SetValue(instruction.Destiny, InterpValue.UInt32(av >= bv ? 1U : 0));;
+
+        SetValue(instruction.Destiny, InterpValue.FromUInt32(a.AsInt32() >= b.AsInt32() ? 1U : 0));;
     }
 
     void OpCopy(Instruction instruction)
@@ -451,51 +446,51 @@ public unsafe class Interpreter
         var a = GetValue(instruction.A);
         Debug.Assert(a.IsInteger());
 
-        if ((UInt32)a.Value == 0)
+        if (a.AsUInt32() == 0)
         {
             return (false, 0);
         }
 
-        return (true, (int)GetValue(instruction.Destiny).Value);
+        return (true, GetValue(instruction.Destiny!).AsInt32());
     }
     
     (bool,int) OpBranchFalse(Instruction instruction)
     {
-        var a = GetValue(instruction.A);
+        var a = GetValue(instruction.A!);
         Debug.Assert(a.IsInteger());
 
-        if ((UInt32)a.Value != 0)
+        if (a.AsUInt32() != 0)
         {
             return (false, 0);
         }
 
-        return (true, (int)GetValue(instruction.Destiny).Value);
+        return (true, GetValue(instruction.Destiny!).AsInt32());
     }
     
     (bool,int) OpBranch(Instruction instruction)
     {
-        return (true, (int)GetValue(instruction.Destiny).Value);
+        return (true, GetValue(instruction.Destiny!).AsInt32());
     }
     
     void OpLoad(Instruction instruction)
     {
         Debug.Assert(instruction.Destiny != null, "instruction.Destiny != null");
-        var address = (UInt32)GetValue(instruction.A.Address).Value;
+        var address = GetValue(instruction.A.Address).AsUInt32();
         // Console.WriteLine($"LoadMemory {instruction.Destiny.Address} {address}");
         switch (instruction.A.MemoryWidth)
         {
             case MemoryWidth.Byte:
-                SetValue(instruction.Destiny, InterpValue.UInt32(Memory.Read8(address)));
+                SetValue(instruction.Destiny, InterpValue.FromUInt32(Memory.Read8(address)));
                 break;
             case MemoryWidth.Word:
-                SetValue(instruction.Destiny, InterpValue.UInt32(Memory.Read16(address)));
+                SetValue(instruction.Destiny, InterpValue.FromUInt32(Memory.Read16(address)));
                 break;
             case MemoryWidth.Dword:
-                SetValue(instruction.Destiny, InterpValue.UInt32(Memory.Read32(address)));
+                SetValue(instruction.Destiny, InterpValue.FromUInt32(Memory.Read32(address)));
                 break;
             case MemoryWidth.Qword:
                 // TODO: ???
-                SetValue(instruction.Destiny, InterpValue.UInt64(Memory.Read64(address)));
+                SetValue(instruction.Destiny, InterpValue.FromUInt64(Memory.Read64(address)));
                 break;
             case null:
                 break;
@@ -513,20 +508,20 @@ public unsafe class Interpreter
         {
             case OperandKind.Memory:
                 Console.WriteLine($"StoreMemory {instruction.Destiny.Address}");
-                var address = (UInt32)GetValue(instruction.Destiny.Address).Value;
+                var address = GetValue(instruction.Destiny.Address).AsUInt32();
                 switch (instruction.Destiny.MemoryWidth)
                 {
                     case MemoryWidth.Byte:
-                        Memory.Write8(address, (byte)GetValue(instruction.A).Value);
+                        Memory.Write8(address, (byte)GetValue(instruction.A).AsUInt32());
                         break;
                     case MemoryWidth.Word:
-                        Memory.Write16(address, (UInt16)GetValue(instruction.A).Value);
+                        Memory.Write16(address, (UInt16)GetValue(instruction.A).AsUInt32());
                         break;
                     case MemoryWidth.Dword:
-                        Memory.Write32(address, (UInt32)GetValue(instruction.A).Value);
+                        Memory.Write32(address, (UInt32)GetValue(instruction.A).AsUInt32());
                         break;
                     case MemoryWidth.Qword:
-                        Memory.Write64(address, (UInt64)GetValue(instruction.A).Value);
+                        Memory.Write64(address, (UInt64)GetValue(instruction.A).AsUInt32());
                         break;
                     case null:
                         break;

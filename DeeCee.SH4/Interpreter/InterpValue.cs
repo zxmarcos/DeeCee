@@ -1,6 +1,6 @@
 ﻿namespace DeeCee.SH4.Interpreter;
 
-public class InterpValue
+public struct InterpValue
 {
     public enum ValueType
     {
@@ -9,48 +9,41 @@ public class InterpValue
         Int64,
         UInt64,
         Float,
-        Double,
+        Double
     }
-    public ValueType Type { get; set; }
-    public object Value { get; set; }
+
+    public ValueType Type;
+    private ulong _rawBits; // Armazena bits de inteiro ou ponto flutuante
+
+    public static InterpValue FromUInt32(uint value)
+        => new() { Type = ValueType.UInt32, _rawBits = value };
+
+    public static InterpValue FromInt32(int value)
+        => new() { Type = ValueType.Int32, _rawBits = unchecked((ulong)value) };
+
+    public static InterpValue FromUInt64(ulong value)
+        => new() { Type = ValueType.UInt64, _rawBits = value };
+
+    public static InterpValue FromInt64(long value)
+        => new() { Type = ValueType.Int64, _rawBits = unchecked((ulong)value) };
+
+    public static InterpValue FromFloat(float value)
+        => new() { Type = ValueType.Float, _rawBits = BitConverter.SingleToUInt32Bits(value) };
+
+    public static InterpValue FromDouble(double value)
+        => new() { Type = ValueType.Double, _rawBits = (ulong)BitConverter.DoubleToInt64Bits(value) };
+
+    public uint AsUInt32() => (uint)_rawBits;
+    public int AsInt32() => unchecked((int)_rawBits);
+    public ulong AsUInt64() => _rawBits;
+    public long AsInt64() => unchecked((long)_rawBits);
+    public float AsFloat() => BitConverter.UInt32BitsToSingle((uint)_rawBits);
+    public double AsDouble() => BitConverter.Int64BitsToDouble((long)_rawBits);
 
     public bool IsInteger()
-    {
-        return Type == ValueType.Int32 || Type == ValueType.Int64 || Type == ValueType.UInt32 || Type == ValueType.UInt64;
-    }
-    
+        => Type == ValueType.Int32 || Type == ValueType.Int64 ||
+           Type == ValueType.UInt32 || Type == ValueType.UInt64;
+
     public bool IsFloat()
-    {
-        return Type == ValueType.Float || Type == ValueType.Double;
-    }
-    
-    public static InterpValue UInt32(UInt32 value)
-    {
-        return new InterpValue() { Type = ValueType.UInt32, Value = value };
-    }
-    
-    public static InterpValue UInt64(UInt64 value)
-    {
-        return new InterpValue() { Type = ValueType.UInt64, Value = value };
-    }
-    
-    public static InterpValue Int32(Int32 value)
-    {
-        return new InterpValue() { Type = ValueType.Int32, Value = value };
-    }
-    
-    public static InterpValue Int64(Int64 value)
-    {
-        return new InterpValue() { Type = ValueType.Int64, Value = value };
-    }
-    
-    public static InterpValue Float(float value)
-    {
-        return new InterpValue() { Type = ValueType.Float, Value = value };
-    }
-    
-    public static InterpValue Double(double value)
-    {
-        return new InterpValue() { Type = ValueType.Double, Value = value };
-    }
+        => Type == ValueType.Float || Type == ValueType.Double;
 }
