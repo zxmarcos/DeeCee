@@ -373,6 +373,32 @@ namespace DeeCee.SH4.Test
                     Assert.That(s.MACL, Is.EqualTo(0xFFFF*2));
                 });
         }
+        
+        [Test]
+        public void TestMull()
+        {
+            CompileInstruction(Sh4Assembler.MULL(1,2));
+            ExecuteAndAssert(
+                () =>
+                {
+                    _state.R[1] = 0x0001_0000;
+                    _state.R[2] = 0x0001_0000;
+                },
+                s =>
+                {
+                    Assert.That(s.MACL, Is.EqualTo(unchecked(0x0001_0000*0x0001_0000)&0xFFFF_FFFF));
+                });
+            ExecuteAndAssert(
+                () =>
+                {
+                    _state.R[1] = 0x0000_5002;
+                    _state.R[2] = 0x0001_FFFF;
+                },
+                s =>
+                {
+                    Assert.That(s.MACL, Is.EqualTo(unchecked((UInt32)unchecked(0x0000_5002*0x0001_FFFF))));
+                });
+        }
 
     }
 }
