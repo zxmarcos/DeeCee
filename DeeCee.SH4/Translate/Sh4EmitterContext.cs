@@ -29,6 +29,16 @@ public class Sh4EmitterContext : EmitterContext
         return And(sr, Constant(1));
     }
 
+    public Operand GetQ()
+    {
+        throw new NotImplementedException();
+    }
+    
+    public Operand GetM()
+    {
+        throw new NotImplementedException();
+    }
+
     public void SetT()
     {
         SetSR(Or(GetSR(), Constant(1)));
@@ -39,6 +49,16 @@ public class Sh4EmitterContext : EmitterContext
         SetSR(Or(GetSR(), Constant(2)));
     }
     
+    public void SetQ()
+    {
+        throw new NotImplementedException();
+    }
+    
+    public void SetM()
+    {
+        throw new NotImplementedException();
+    }
+    
     public void ClearT()
     {
         SetSR(And(GetSR(), Constant(~1)));
@@ -47,6 +67,16 @@ public class Sh4EmitterContext : EmitterContext
     public void ClearS()
     {
         SetSR(And(GetSR(), Constant(~2)));
+    }
+    
+    public void ClearQ()
+    {
+        throw new NotImplementedException();
+    }
+    
+    public void ClearM()
+    {
+        throw new NotImplementedException();
     }
     
     // op = 1

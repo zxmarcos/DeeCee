@@ -196,4 +196,21 @@ public static class ArithmeticOps
         var result = ir.Multiply(nReg, mReg);
         ir.SetMACL(result);
     }
+    
+    public static void Div0s(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        var nReg = ir.GetReg(ir.Op.N());
+        
+        ir.If(ir.And(nReg, ir.Constant(0x8000_0000)), ir.ClearQ, ir.SetQ);
+        ir.If(ir.And(mReg, ir.Constant(0x8000_0000)), ir.ClearM, ir.SetM);
+        ir.If(ir.CompareEqual(ir.GetM(), ir.GetQ()), ir.ClearT, ir.SetT);
+    }
+    
+    public static void Div0u(Sh4EmitterContext ir)
+    {
+        ir.ClearT();
+        ir.ClearM();
+        ir.ClearQ();
+    }
 }
