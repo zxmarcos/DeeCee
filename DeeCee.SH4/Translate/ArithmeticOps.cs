@@ -167,4 +167,33 @@ public static class ArithmeticOps
         ir.SetReg(n, tmp);
         ir.If(ir.IsZero(tmp), ir.SetT, ir.ClearT);
     }
+    
+    public static void Mulu(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        var nReg = ir.GetReg(ir.Op.N());
+
+        var wordMask = ir.Constant(0xFFFFu);
+        var result = ir.Multiply(ir.And(nReg, wordMask), ir.And(mReg, wordMask));
+        ir.SetMACL(result);
+    }
+    
+    public static void Muls(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        var nReg = ir.GetReg(ir.Op.N());
+
+        var wordMask = ir.Constant(0xFFFFu);
+        var result = ir.MultiplySigned(ir.SignExtend16(ir.And(nReg, wordMask)), ir.SignExtend16(ir.And(mReg, wordMask)));
+        ir.SetMACL(result);
+    }
+    
+    public static void Mull(Sh4EmitterContext ir)
+    {
+        var mReg = ir.GetReg(ir.Op.M());
+        var nReg = ir.GetReg(ir.Op.N());
+        
+        var result = ir.Multiply(nReg, mReg);
+        ir.SetMACL(result);
+    }
 }

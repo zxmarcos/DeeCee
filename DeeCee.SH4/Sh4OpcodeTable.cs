@@ -114,9 +114,9 @@ public class Sh4OpcodeTable
         Add(new InstructionMeta("0110nnnnmmmm1101", ExtOps.Extuw              ,"extu.w rm, rn"));
         Add(new InstructionMeta("0000nnnnmmmm1111", UnknownOps.Unimplemented  ,"mac.l @rm+, @rn+"));
         Add(new InstructionMeta("0100nnnnmmmm1111", UnknownOps.Unimplemented  ,"mac.w @rm+, @rn+"));
-        Add(new InstructionMeta("0000nnnnmmmm0111", UnknownOps.Unimplemented  ,"mul.l rm, rn"));
-        Add(new InstructionMeta("0010nnnnmmmm1111", UnknownOps.Unimplemented  ,"muls rm, rn"));
-        Add(new InstructionMeta("0010nnnnmmmm1110", UnknownOps.Unimplemented  ,"mulu rm, rn"));
+        Add(new InstructionMeta("0000nnnnmmmm0111", ArithmeticOps.Mull        ,"mul.l rm, rn"));
+        Add(new InstructionMeta("0010nnnnmmmm1111", ArithmeticOps.Muls        ,"muls rm, rn"));
+        Add(new InstructionMeta("0010nnnnmmmm1110", ArithmeticOps.Mulu        ,"mulu rm, rn"));
         Add(new InstructionMeta("0110nnnnmmmm1011", ArithmeticOps.Neg         ,"neg rm, rn"));
         Add(new InstructionMeta("0110nnnnmmmm1010", ArithmeticOps.NegC        ,"negc rm, rn"));
         Add(new InstructionMeta("0011nnnnmmmm1000", ArithmeticOps.Sub         ,"sub rm, rn"));

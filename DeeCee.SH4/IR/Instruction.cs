@@ -26,6 +26,8 @@ public class Instruction
             Opcode.COPY         => $"{dst} <- {opA}",
             Opcode.ADD          => $"{dst} <- {opA} + {opB}",
             Opcode.SUB          => $"{dst} <- {opA} - {opB}",
+            Opcode.MUL          => $"{dst} <- {opA} u* {opB}",
+            Opcode.MULS         => $"{dst} <- {opA} i* {opB}",
             Opcode.AND          => $"{dst} <- {opA} & {opB}",
             Opcode.OR           => $"{dst} <- {opA} | {opB}",
             Opcode.XOR          => $"{dst} <- {opA} ^ {opB}",

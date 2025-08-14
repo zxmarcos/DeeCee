@@ -6,6 +6,8 @@ public enum Opcode
     COPY,
     ADD,
     SUB,
+    MUL,
+    MULS,
     STORE,
     LOAD,
     AND,
@@ -30,5 +32,6 @@ public enum Opcode
     CMP_GE_SIGN,
     BRANCH,
     BRANCH_TRUE,
-    BRANCH_FALSE
+    BRANCH_FALSE,
+    
 }

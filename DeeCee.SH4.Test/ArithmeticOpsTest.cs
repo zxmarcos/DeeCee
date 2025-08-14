@@ -347,5 +347,32 @@ namespace DeeCee.SH4.Test
                     Assert.That(s.T, Is.False);
                 });
         }
+        
+        [Test]
+        public void TestMuluAndMuls()
+        {
+            CompileInstruction(Sh4Assembler.MULU(1,2));
+            ExecuteAndAssert(
+                () =>
+                {
+                    _state.R[1] = 0x0001_0000;
+                    _state.R[2] = 0x0001_0000;
+                },
+                s =>
+                {
+                    Assert.That(s.MACL, Is.EqualTo(0));
+                });
+            ExecuteAndAssert(
+                () =>
+                {
+                    _state.R[1] = 0x0001_0002;
+                    _state.R[2] = 0x0001_FFFF;
+                },
+                s =>
+                {
+                    Assert.That(s.MACL, Is.EqualTo(0xFFFF*2));
+                });
+        }
+
     }
 }

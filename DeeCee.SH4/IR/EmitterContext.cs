@@ -28,6 +28,20 @@ public class EmitterContext
         Block.Add(new Instruction(a, b, result, Opcode.SUB));
         return result;
     }
+    
+    public Operand Multiply(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.MUL));
+        return result;
+    }
+    
+    public Operand MultiplySigned(Operand a, Operand b)
+    {
+        var result = AllocateLocal();
+        Block.Add(new Instruction(a, b, result, Opcode.MULS));
+        return result;
+    }
 
     public Operand And(Operand a, Operand b)
     {
