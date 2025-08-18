@@ -2,7 +2,7 @@
 
 namespace DeeCee.SH4;
 
-public class Sh4OpcodeTable
+public static class Sh4OpcodeTable
 {
     public delegate void EmitHandler(Sh4EmitterContext ir);
 
@@ -12,11 +12,12 @@ public class Sh4OpcodeTable
     {
         public ushort Mask;
         public ushort BitPattern;
-        public string Pattern;
-        public DisasmHandler Disasm;
-        public EmitHandler Emit;
+        public readonly string Pattern;
+        public DisasmHandler? Disasm;
+        public readonly EmitHandler Emit;
+        public OpcodeFlags Flags;
 
-        public InstructionMeta(string pattern, EmitHandler emit, string template)
+        public InstructionMeta(string pattern, EmitHandler emit, string template, OpcodeFlags flags = OpcodeFlags.NONE)
         {
             Pattern = pattern;
             Emit = emit;
@@ -29,8 +30,8 @@ public class Sh4OpcodeTable
         public EmitHandler Emit;
     }
 
-    static List<InstructionMeta> _metaInstructions;
-    static Instruction[] _lookupTable;
+    private static readonly List<InstructionMeta> MetaInstructions;
+    private static Instruction[] _lookupTable;
 
     public static Instruction GetInstruction(ushort opcode)
     {
@@ -42,49 +43,59 @@ public class Sh4OpcodeTable
         var (mask, pattern) = ParsePattern(meta.Pattern);
         meta.BitPattern = pattern;
         meta.Mask = mask;
-        _metaInstructions.Add(meta);
+        MetaInstructions.Add(meta);
+    }
+
+    [Flags]
+    public enum OpcodeFlags
+    {
+        NONE = 0,
+        IS_LOAD,
+        IS_STORE,
+        IS_BRANCH,
+        IS_DELAY_SLOT,
     }
 
     static Sh4OpcodeTable()
     {
         // @formatter:off
         #region "SH4 Opcode Table"
-        _metaInstructions = new List<InstructionMeta>();
+        MetaInstructions = [];
         Add(new InstructionMeta("1110nnnniiiiiiii", DataOps.MovI              ,"mov #imm8, rn"));
-        Add(new InstructionMeta("1001nnnndddddddd", DataOps.MovWi             ,"mov.w @(disp:8,pc), rn"));
-        Add(new InstructionMeta("1101nnnndddddddd", DataOps.MovLi             ,"mov.l @(disp:8,pc), rn"));
+        Add(new InstructionMeta("1001nnnndddddddd", DataOps.MovWi             ,"mov.w @(disp:8,pc), rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("1101nnnndddddddd", DataOps.MovLi             ,"mov.l @(disp:8,pc), rn", OpcodeFlags.IS_LOAD));
         Add(new InstructionMeta("0110nnnnmmmm0011", DataOps.Mov               ,"mov rm, rn"));
-        Add(new InstructionMeta("0010nnnnmmmm0000", DataOps.MovBs             ,"mov.b rm, @rn"));
-        Add(new InstructionMeta("0010nnnnmmmm0001", DataOps.MovWs             ,"mov.w rm, @rn"));
-        Add(new InstructionMeta("0010nnnnmmmm0010", DataOps.MovLs             ,"mov.l rm, @rn"));
-        Add(new InstructionMeta("0110nnnnmmmm0000", DataOps.MovBl             ,"mov.b @rm, rn"));
-        Add(new InstructionMeta("0110nnnnmmmm0001", DataOps.MovWl             ,"mov.w @rm, rn"));
-        Add(new InstructionMeta("0110nnnnmmmm0010", DataOps.MovLl             ,"mov.l @rm, rn"));
-        Add(new InstructionMeta("0010nnnnmmmm0100", DataOps.MovBm             ,"mov.b rm,@-rn"));
-        Add(new InstructionMeta("0010nnnnmmmm0101", DataOps.MovWm             ,"mov.w rm,@-rn"));
-        Add(new InstructionMeta("0010nnnnmmmm0110", DataOps.MovLm             ,"mov.l rm,@-rn"));
-        Add(new InstructionMeta("0110nnnnmmmm0100", DataOps.MovBp             ,"mov.b @rm+,rn"));
-        Add(new InstructionMeta("0110nnnnmmmm0101", DataOps.MovWp             ,"mov.w @rm+,rn"));
-        Add(new InstructionMeta("0110nnnnmmmm0110", DataOps.MovLp             ,"mov.l @rm+,rn"));
-        Add(new InstructionMeta("10000000nnnndddd", DataOps.MovBs4            ,"mov.b r0, @(disp:4,rm)"));
-        Add(new InstructionMeta("10000001nnnndddd", DataOps.MovWs4            ,"mov.w r0, @(disp:4,rm)"));
-        Add(new InstructionMeta("0001nnnnmmmmdddd", DataOps.MovLs4            ,"mov.l rm, @(disp:4,rn)"));
-        Add(new InstructionMeta("10000100mmmmdddd", DataOps.MovBl4            ,"mov.b @(disp:4,rm), r0"));
-        Add(new InstructionMeta("10000101mmmmdddd", DataOps.MovWl4            ,"mov.w @(disp:4,rm), r0"));
-        Add(new InstructionMeta("0101nnnnmmmmdddd", DataOps.MovLl4            ,"mov.l @(disp:4,rm), rn"));
-        Add(new InstructionMeta("0000nnnnmmmm0100", DataOps.MovBs0            ,"mov.b rm, @(r0,rn)"));
-        Add(new InstructionMeta("0000nnnnmmmm0101", DataOps.MovWs0            ,"mov.w rm, @(r0,rn)"));
-        Add(new InstructionMeta("0000nnnnmmmm0110", DataOps.MovLs0            ,"mov.l rm, @(r0,rn)"));
-        Add(new InstructionMeta("0000nnnnmmmm1100", DataOps.MovBl0            ,"mov.b @(r0,rm), rn"));
-        Add(new InstructionMeta("0000nnnnmmmm1101", DataOps.MovWl0            ,"mov.w @(r0,rm), rn"));
-        Add(new InstructionMeta("0000nnnnmmmm1110", DataOps.MovLl0            ,"mov.l @(r0,rm), rn"));
-        Add(new InstructionMeta("11000000dddddddd", DataOps.MovBsg            ,"mov.b r0, @(disp:8,gbr)"));
-        Add(new InstructionMeta("11000001dddddddd", DataOps.MovWsg            ,"mov.w r0, @(disp:8,gbr)"));
-        Add(new InstructionMeta("11000010dddddddd", DataOps.MovLsg            ,"mov.l r0, @(disp:8,gbr)"));
-        Add(new InstructionMeta("11000100dddddddd", DataOps.MovBlg            ,"mov.b @(disp:8,gbr), r0"));
-        Add(new InstructionMeta("11000101dddddddd", DataOps.MovWlg            ,"mov.w @(disp:8,gbr), r0"));
-        Add(new InstructionMeta("11000110dddddddd", DataOps.MovLlg            ,"mov.l @(disp:8,gbr), r0"));
-        Add(new InstructionMeta("11000111dddddddd", DataOps.MovA              ,"mova (disp:8,pc), r0"));
+        Add(new InstructionMeta("0010nnnnmmmm0000", DataOps.MovBs             ,"mov.b rm, @rn", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0010nnnnmmmm0001", DataOps.MovWs             ,"mov.w rm, @rn", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0010nnnnmmmm0010", DataOps.MovLs             ,"mov.l rm, @rn", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0110nnnnmmmm0000", DataOps.MovBl             ,"mov.b @rm, rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0110nnnnmmmm0001", DataOps.MovWl             ,"mov.w @rm, rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0110nnnnmmmm0010", DataOps.MovLl             ,"mov.l @rm, rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0010nnnnmmmm0100", DataOps.MovBm             ,"mov.b rm,@-rn", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0010nnnnmmmm0101", DataOps.MovWm             ,"mov.w rm,@-rn", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0010nnnnmmmm0110", DataOps.MovLm             ,"mov.l rm,@-rn", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0110nnnnmmmm0100", DataOps.MovBp             ,"mov.b @rm+,rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0110nnnnmmmm0101", DataOps.MovWp             ,"mov.w @rm+,rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0110nnnnmmmm0110", DataOps.MovLp             ,"mov.l @rm+,rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("10000000nnnndddd", DataOps.MovBs4            ,"mov.b r0, @(disp:4,rm)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("10000001nnnndddd", DataOps.MovWs4            ,"mov.w r0, @(disp:4,rm)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0001nnnnmmmmdddd", DataOps.MovLs4            ,"mov.l rm, @(disp:4,rn)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("10000100mmmmdddd", DataOps.MovBl4            ,"mov.b @(disp:4,rm), r0", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("10000101mmmmdddd", DataOps.MovWl4            ,"mov.w @(disp:4,rm), r0", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0101nnnnmmmmdddd", DataOps.MovLl4            ,"mov.l @(disp:4,rm), rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0000nnnnmmmm0100", DataOps.MovBs0            ,"mov.b rm, @(r0,rn)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0000nnnnmmmm0101", DataOps.MovWs0            ,"mov.w rm, @(r0,rn)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0000nnnnmmmm0110", DataOps.MovLs0            ,"mov.l rm, @(r0,rn)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("0000nnnnmmmm1100", DataOps.MovBl0            ,"mov.b @(r0,rm), rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0000nnnnmmmm1101", DataOps.MovWl0            ,"mov.w @(r0,rm), rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("0000nnnnmmmm1110", DataOps.MovLl0            ,"mov.l @(r0,rm), rn", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("11000000dddddddd", DataOps.MovBsg            ,"mov.b r0, @(disp:8,gbr)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("11000001dddddddd", DataOps.MovWsg            ,"mov.w r0, @(disp:8,gbr)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("11000010dddddddd", DataOps.MovLsg            ,"mov.l r0, @(disp:8,gbr)", OpcodeFlags.IS_STORE));
+        Add(new InstructionMeta("11000100dddddddd", DataOps.MovBlg            ,"mov.b @(disp:8,gbr), r0", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("11000101dddddddd", DataOps.MovWlg            ,"mov.w @(disp:8,gbr), r0", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("11000110dddddddd", DataOps.MovLlg            ,"mov.l @(disp:8,gbr), r0", OpcodeFlags.IS_LOAD));
+        Add(new InstructionMeta("11000111dddddddd", DataOps.MovA              ,"mova (disp:8,pc), r0", OpcodeFlags.IS_LOAD));
         Add(new InstructionMeta("0000nnnn00101001", DataOps.MovT              ,"movt rn"));
         Add(new InstructionMeta("0110nnnnmmmm1000", DataOps.Swapb             ,"swap.b rm, rn"));
         Add(new InstructionMeta("0110nnnnmmmm1001", DataOps.Swapw             ,"swap.w rm, rn"));
@@ -152,17 +163,17 @@ public class Sh4OpcodeTable
         Add(new InstructionMeta("0100nnnn00011001", ShiftOps.Shlr8            ,"shlr8 rn"));
         Add(new InstructionMeta("0100nnnn00101000", ShiftOps.Shll16           ,"shll16 rn"));
         Add(new InstructionMeta("0100nnnn00101001", ShiftOps.Shlr16           ,"shlr16 rn"));
-        Add(new InstructionMeta("10001011dddddddd", BranchOps.Bf              ,"bf disp:8"));
-        Add(new InstructionMeta("10001111dddddddd", BranchOps.Bfs             ,"bfs disp:8"));
-        Add(new InstructionMeta("10001001dddddddd", BranchOps.Bt              ,"bt disp:8"));
-        Add(new InstructionMeta("10001101dddddddd", BranchOps.Bts             ,"bts disp:8"));
-        Add(new InstructionMeta("1010dddddddddddd", BranchOps.Bra             ,"bra disp:12"));
-        Add(new InstructionMeta("0000nnnn00100011", BranchOps.Braf            ,"braf rn"));
-        Add(new InstructionMeta("1011dddddddddddd", BranchOps.Bsr             ,"bsr disp:12"));
-        Add(new InstructionMeta("0000nnnn00000011", BranchOps.Bsrf            ,"bsrf rn"));
-        Add(new InstructionMeta("0100nnnn00101011", BranchOps.Jmp             ,"jmp @rm"));
-        Add(new InstructionMeta("0100nnnn00001011", BranchOps.Jsr             ,"jsr @rn"));
-        Add(new InstructionMeta("0000000000001011", BranchOps.Rts             ,"rts"));
+        Add(new InstructionMeta("10001011dddddddd", BranchOps.Bf              ,"bf disp:8", OpcodeFlags.IS_BRANCH));
+        Add(new InstructionMeta("10001111dddddddd", BranchOps.Bfs             ,"bfs disp:8", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("10001001dddddddd", BranchOps.Bt              ,"bt disp:8", OpcodeFlags.IS_BRANCH));
+        Add(new InstructionMeta("10001101dddddddd", BranchOps.Bts             ,"bts disp:8", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("1010dddddddddddd", BranchOps.Bra             ,"bra disp:12", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("0000nnnn00100011", BranchOps.Braf            ,"braf rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("1011dddddddddddd", BranchOps.Bsr             ,"bsr disp:12", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("0000nnnn00000011", BranchOps.Bsrf            ,"bsrf rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("0100nnnn00101011", BranchOps.Jmp             ,"jmp @rm", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("0100nnnn00001011", BranchOps.Jsr             ,"jsr @rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("0000000000001011", BranchOps.Rts             ,"rts", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
         Add(new InstructionMeta("0000000000101000", ArithmeticOps.ClrMac      ,"clrmac"));
         Add(new InstructionMeta("0000000001001000", FlagOps.ClrS              ,"clrs"));
         Add(new InstructionMeta("0000000000001000", FlagOps.ClrT              ,"clrt"));
@@ -193,7 +204,7 @@ public class Sh4OpcodeTable
         Add(new InstructionMeta("0000nnnn10100011", UnknownOps.Unimplemented  ,"ocbp"));
         Add(new InstructionMeta("0000nnnn10110011", UnknownOps.Unimplemented  ,"ocbwb"));
         Add(new InstructionMeta("0000nnnn10000011", UnknownOps.Unimplemented  ,"pref @rn"));
-        Add(new InstructionMeta("0000000000101011", UnknownOps.Unimplemented  ,"rte"));
+        Add(new InstructionMeta("0000000000101011", UnknownOps.Unimplemented  ,"rte", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
         Add(new InstructionMeta("0000000001011000", FlagOps.SetS              ,"sets"));
         Add(new InstructionMeta("0000000000011000", FlagOps.SetT              ,"sett"));
         Add(new InstructionMeta("0000000000011011", UnknownOps.Unimplemented  ,"sleep"));
@@ -274,7 +285,7 @@ public class Sh4OpcodeTable
             ushort opcode = (ushort)i;
             
             // Encontra a primeira instrução que corresponde ao opcode.
-            foreach (var instruction in _metaInstructions)
+            foreach (var instruction in MetaInstructions)
             {
                 if ((opcode & instruction.Mask) == instruction.BitPattern)
                 {
