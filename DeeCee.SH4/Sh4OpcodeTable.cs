@@ -217,7 +217,7 @@ public static class Sh4OpcodeTable
         Add(new InstructionMeta("0000nnnn10010011", UnknownOps.Unimplemented  ,"ocbi"));
         Add(new InstructionMeta("0000nnnn10100011", UnknownOps.Unimplemented  ,"ocbp"));
         Add(new InstructionMeta("0000nnnn10110011", UnknownOps.Unimplemented  ,"ocbwb"));
-        Add(new InstructionMeta("0000nnnn10000011", UnknownOps.Unimplemented  ,"pref @rn"));
+        Add(new InstructionMeta("0000nnnn10000011", DataOps.Pref              ,"pref @rn"));
         Add(new InstructionMeta("0000000000101011", UnknownOps.Unimplemented  ,"rte", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
         Add(new InstructionMeta("0000000001011000", FlagOps.SetS              ,"sets"));
         Add(new InstructionMeta("0000000000011000", FlagOps.SetT              ,"sett"));

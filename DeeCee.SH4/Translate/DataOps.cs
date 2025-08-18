@@ -369,4 +369,10 @@ public static class DataOps
     {
         throw new NotImplementedException();
     }
+    
+    public static void Pref(Sh4EmitterContext ir)
+    {
+        // throw new NotImplementedException();
+    }
+    
 }
