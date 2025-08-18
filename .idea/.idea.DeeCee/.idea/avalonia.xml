@@ -6,6 +6,7 @@
         <entry key="DeeCee.UI/App.axaml" value="DeeCee.UI/DeeCee.UI.csproj" />
         <entry key="DeeCee.UI/DasmView.axaml" value="DeeCee.UI/DeeCee.UI.csproj" />
         <entry key="DeeCee.UI/MainWindow.axaml" value="DeeCee.UI/DeeCee.UI.csproj" />
+        <entry key="DeeCee.UI/Views/MainWindow.axaml" value="DeeCee.UI/DeeCee.UI.csproj" />
       </map>
     </option>
   </component>
