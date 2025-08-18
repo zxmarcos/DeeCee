@@ -56,9 +56,10 @@ public class Memory : IMemory
     public Memory()
     {
         _memoryMap = new UIntPtr[8][];
+        const uint MaxPages = (0xFFFF_FFFFu >> PageShift) + 1;
         for (int i = 0; i < 8; i++)
         {
-            _memoryMap[i] = new UIntPtr[1 << PageShift];
+            _memoryMap[i] = new UIntPtr[MaxPages];
         }
 
         _read8 = new MemoryRead8Handler[MaxHandler];
@@ -74,6 +75,7 @@ public class Memory : IMemory
     // Método para mapear memória diretamente de um ponteiro
     public unsafe int MapMemory(void* pMemory, UInt32 startAddress, UInt32 endAddress, MapType mapType)
     {
+        // Console.WriteLine($"MapMemory {(UIntPtr)pMemory:X} {startAddress:X} {endAddress:X} {mapType:X}");
         if (pMemory == null)
             return -1;
         
@@ -87,14 +89,14 @@ public class Memory : IMemory
 
         // Ponteiro base da memória
         var basePtr = new UIntPtr(pMemory);
-
+ 
         // Mapeia as páginas
         for (UInt32 i = 0; i < maxPages; i++)
         {
             var currentPage = startPage + i;
             var pageOffset = PageSize * i;
             var pagePtr = new UIntPtr((byte*)pMemory + pageOffset);
-
+            
             // Mapeia para leitura se solicitado
             if ((mapType & MapType.Read) != 0)
             {
@@ -161,6 +163,7 @@ public class Memory : IMemory
 
         return 0;
     }
+    
 
     public unsafe byte Read8(UInt32 address)
     {
@@ -170,6 +173,7 @@ public class Memory : IMemory
         {
             if (_read8[idx] != null)
                 return _read8[idx]!(address);
+            Console.WriteLine($"Read8 Invalid {address:X8}");
             return 0;
         }
 
@@ -185,6 +189,7 @@ public class Memory : IMemory
         {
             if (_read16[idx] != null)
                 return _read16[idx]!(address);
+            Console.WriteLine($"Read16 Invalid {address:X8}");
             return 0;
         }
 
@@ -200,6 +205,7 @@ public class Memory : IMemory
         {
             if (_read32[idx] != null)
                 return _read32[idx]!(address);
+            Console.WriteLine($"Read32 Invalid {address:X8}");
             return 0;
         }
 
@@ -215,6 +221,7 @@ public class Memory : IMemory
         {
             if (_read64[idx] != null)
                 return _read64[idx]!(address);
+            Console.WriteLine($"Read64 Invalid {address:X8}");
             return 0;
         }
 
@@ -230,6 +237,7 @@ public class Memory : IMemory
         {
             if (_write8[idx] != null)
                 _write8[idx]!(address, value);
+            Console.WriteLine($"Write8 Invalid {address:X8} {value:X}");
             return;
         }
 
@@ -245,6 +253,7 @@ public class Memory : IMemory
         {
             if (_write16[idx] != null)
                 _write16[idx]!(address, value);
+            Console.WriteLine($"Write16 Invalid {address:X8} {value:X}");
             return;
         }
 
@@ -260,6 +269,7 @@ public class Memory : IMemory
         {
             if (_write32[idx] != null)
                 _write32[idx]!(address, value);
+            Console.WriteLine($"Write32 Invalid {address:X8} {value:X}");
             return;
         }
 
@@ -275,6 +285,7 @@ public class Memory : IMemory
         {
             if (_write64[idx] != null)
                 _write64[idx]!(address, value);
+            Console.WriteLine($"Write64 Invalid {address:X8} {value:X}");
             return;
         }
 
