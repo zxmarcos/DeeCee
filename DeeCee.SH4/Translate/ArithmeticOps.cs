@@ -213,4 +213,115 @@ public static class ArithmeticOps
         ir.ClearM();
         ir.ClearQ();
     }
+    
+    public static void Div1(Sh4EmitterContext ir)
+    {
+        var tmp0 = ir.AllocateLocal();
+        var tmp2 = ir.AllocateLocal();
+        
+        var n = ir.Op.N();
+        var m = ir.Op.M();
+        
+        // old_q=Q;
+        var old_q = ir.GetQ();
+        // Q=(unsigned char)((0x80000000 & R[n])!=0);
+        ir.If(ir.And(ir.Constant(0x8000_0000), ir.GetReg(n)), ir.SetQ, ir.ClearQ);
+        
+        // tmp2= R[m];
+        ir.Copy(ir.GetReg(m), tmp2);
+        
+        
+        // R[n]<<=1;
+        // R[n]|=T;
+        ir.SetReg(n, ir.Or(ir.ShiftLeft(ir.GetReg(n), ir.Constant(1)), ir.GetT()));
+        
+        // tmp0=R[n];
+        ir.Copy(ir.GetReg(n), tmp0);
+        
+        //switch(old_q)
+        ir.If(ir.IsZero(old_q), () =>
+        {
+            // case 0:
+            // switch (M)
+            ir.If(ir.IsZero(ir.GetM()), () =>
+            {
+                // case 0:
+                // R[n]-=tmp2;
+                ir.SetReg(n, ir.Sub(ir.GetReg(n), tmp2));
+                //  tmp1=(R[n]>tmp0);
+                var tmp1 = ir.CompareGreater(ir.GetReg(n), tmp0);
+                //switch (Q)
+                ir.If(ir.IsZero(ir.GetQ()), () =>
+                {
+                    //case 0:Q=tmp1;
+                    ir.If(ir.IsZero(tmp1), ir.ClearQ, ir.SetQ);
+                }, () =>
+                {
+                    //case 1: Q=(unsigned char)(tmp1==0)
+                    ir.If(ir.IsZero(tmp1), ir.SetQ, ir.ClearQ);
+                });
+            }, () =>
+            {
+                // case 1:
+                // R[n]+=tmp2;
+                ir.SetReg(n, ir.Add(ir.GetReg(n), tmp2));
+                //  tmp1=(R[n]<tmp0);
+                var tmp1 = ir.CompareLesser(ir.GetReg(n), tmp0);
+                //switch (Q)
+                ir.If(ir.IsZero(ir.GetQ()), () =>
+                {
+                    // case 0:Q=(unsigned char)(tmp1==0)
+                    ir.If(ir.IsZero(tmp1), ir.SetQ, ir.ClearQ);
+                    
+                }, () =>
+                {
+                    //case 1: Q=tmp1;
+                    ir.If(ir.IsZero(tmp1), ir.ClearQ, ir.SetQ);
+                    
+                });
+            });
+            
+        }, () =>
+        {
+            // case 1:
+            // switch (M)
+            ir.If(ir.IsZero(ir.GetM()), () =>
+            {
+                // case 0:
+                // R[n]+=tmp2;
+                ir.SetReg(n, ir.Add(ir.GetReg(n), tmp2));
+                //  tmp1=(R[n]<tmp0);
+                var tmp1 = ir.CompareLesser(ir.GetReg(n), tmp0);
+                //switch (Q)
+                ir.If(ir.IsZero(ir.GetQ()), () =>
+                {
+                    //case 0:Q=tmp1;
+                    ir.If(ir.IsZero(tmp1), ir.ClearQ, ir.SetQ);
+                }, () =>
+                {
+                    //case 1: Q=(unsigned char)(tmp1==0)
+                    ir.If(ir.IsZero(tmp1), ir.SetQ, ir.ClearQ);
+                });
+            }, () =>
+            {
+                // case 1:
+                // R[n]-=tmp2;
+                ir.SetReg(n, ir.Add(ir.GetReg(n), tmp2));
+                //  tmp1=(R[n]>tmp0);
+                var tmp1 = ir.CompareGreater(ir.GetReg(n), tmp0);
+                //switch (Q)
+                ir.If(ir.IsZero(ir.GetQ()), () =>
+                {
+                    // case 0:Q=(unsigned char)(tmp1==0)
+                    ir.If(ir.IsZero(tmp1), ir.SetQ, ir.ClearQ);
+                    
+                }, () =>
+                {
+                    //case 1: Q=tmp1;
+                    ir.If(ir.IsZero(tmp1), ir.ClearQ, ir.SetQ);
+                    
+                });
+            });
+        });
+    }
 }

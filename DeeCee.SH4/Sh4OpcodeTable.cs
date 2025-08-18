@@ -129,7 +129,7 @@ public static class Sh4OpcodeTable
         Add(new InstructionMeta("0010nnnnmmmm1100", CompareOps.CmpStr         ,"cmp/str rm, rn"));
         Add(new InstructionMeta("0010nnnnmmmm0111", ArithmeticOps.Div0s       ,"div0s rm, rn"));
         Add(new InstructionMeta("0000000000011001", ArithmeticOps.Div0u       ,"div0u"));
-        Add(new InstructionMeta("0011nnnnmmmm0100", UnknownOps.Unimplemented  ,"div1 rm, rn"));
+        Add(new InstructionMeta("0011nnnnmmmm0100", ArithmeticOps.Div1        ,"div1 rm, rn"));
         Add(new InstructionMeta("0011nnnnmmmm1101", UnknownOps.Unimplemented  ,"dmuls.l rm, rn"));
         Add(new InstructionMeta("0011nnnnmmmm0101", UnknownOps.Unimplemented  ,"dmulu.l rm, rn"));
         Add(new InstructionMeta("0100nnnn00010000", ArithmeticOps.Dt          ,"dt rn"));
