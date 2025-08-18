@@ -60,6 +60,7 @@ public unsafe class Interpreter
         switch((Sh4EmitterContext.RegConstants)regNum)
         {
             case Sh4EmitterContext.RegConstants.PC: _state->PC = val;
+                // Console.WriteLine($"$PC <= {val:X8}");
                 return;
             case Sh4EmitterContext.RegConstants.SR: _state->SR = val;
                 return;
@@ -500,7 +501,7 @@ public unsafe class Interpreter
     {
         Debug.Assert(instruction.Destiny != null, "instruction.Destiny != null");
         var address = GetValue(instruction.A.Address).AsUInt32();
-        // Console.WriteLine($"LoadMemory {instruction.Destiny.Address} {address}");
+        Console.WriteLine($"************ LoadMemory {instruction.A.MemoryWidth} 0x{address:X8}");
         switch (instruction.A.MemoryWidth)
         {
             case MemoryWidth.Byte:
@@ -531,8 +532,8 @@ public unsafe class Interpreter
         switch (instruction.Destiny.Kind)
         {
             case OperandKind.Memory:
-                Console.WriteLine($"StoreMemory {instruction.Destiny.Address}");
                 var address = GetValue(instruction.Destiny.Address).AsUInt32();
+                Console.WriteLine($"************ StoreMemory {instruction.Destiny.MemoryWidth} 0x{address:X8}");
                 switch (instruction.Destiny.MemoryWidth)
                 {
                     case MemoryWidth.Byte:

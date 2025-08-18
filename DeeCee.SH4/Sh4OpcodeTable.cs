@@ -1,4 +1,5 @@
-﻿using DeeCee.SH4.Translate;
+﻿using System.Runtime.CompilerServices;
+using DeeCee.SH4.Translate;
 
 namespace DeeCee.SH4;
 
@@ -15,7 +16,7 @@ public static class Sh4OpcodeTable
         public readonly string Pattern;
         public DisasmHandler? Disasm;
         public readonly EmitHandler Emit;
-        public OpcodeFlags Flags;
+        public OpcodeFlags Flags { get; }
 
         public InstructionMeta(string pattern, EmitHandler emit, string template, OpcodeFlags flags = OpcodeFlags.NONE)
         {
@@ -28,12 +29,25 @@ public static class Sh4OpcodeTable
     {
         public DisasmHandler Disasm;
         public EmitHandler Emit;
+        public OpcodeFlags Flags;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsDelayed()
+        {
+            return (Flags & OpcodeFlags.IS_DELAYED) != 0;
+        }
+        
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public bool IsBranch()
+        {
+            return (Flags & OpcodeFlags.IS_BRANCH) != 0;
+        }
     }
 
     private static readonly List<InstructionMeta> MetaInstructions;
     private static Instruction[] _lookupTable;
 
-    public static Instruction GetInstruction(ushort opcode)
+    public static Instruction? GetInstruction(ushort opcode)
     {
         return _lookupTable[opcode];
     }
@@ -50,10 +64,10 @@ public static class Sh4OpcodeTable
     public enum OpcodeFlags
     {
         NONE = 0,
-        IS_LOAD,
-        IS_STORE,
-        IS_BRANCH,
-        IS_DELAY_SLOT,
+        IS_LOAD = (1 << 0),
+        IS_STORE = (1 << 1),
+        IS_BRANCH = (1 << 2),
+        IS_DELAYED = (1 << 3),
     }
 
     static Sh4OpcodeTable()
@@ -164,16 +178,16 @@ public static class Sh4OpcodeTable
         Add(new InstructionMeta("0100nnnn00101000", ShiftOps.Shll16           ,"shll16 rn"));
         Add(new InstructionMeta("0100nnnn00101001", ShiftOps.Shlr16           ,"shlr16 rn"));
         Add(new InstructionMeta("10001011dddddddd", BranchOps.Bf              ,"bf disp:8", OpcodeFlags.IS_BRANCH));
-        Add(new InstructionMeta("10001111dddddddd", BranchOps.Bfs             ,"bfs disp:8", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("10001111dddddddd", BranchOps.Bfs             ,"bfs disp:8", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
         Add(new InstructionMeta("10001001dddddddd", BranchOps.Bt              ,"bt disp:8", OpcodeFlags.IS_BRANCH));
-        Add(new InstructionMeta("10001101dddddddd", BranchOps.Bts             ,"bts disp:8", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
-        Add(new InstructionMeta("1010dddddddddddd", BranchOps.Bra             ,"bra disp:12", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
-        Add(new InstructionMeta("0000nnnn00100011", BranchOps.Braf            ,"braf rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
-        Add(new InstructionMeta("1011dddddddddddd", BranchOps.Bsr             ,"bsr disp:12", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
-        Add(new InstructionMeta("0000nnnn00000011", BranchOps.Bsrf            ,"bsrf rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
-        Add(new InstructionMeta("0100nnnn00101011", BranchOps.Jmp             ,"jmp @rm", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
-        Add(new InstructionMeta("0100nnnn00001011", BranchOps.Jsr             ,"jsr @rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
-        Add(new InstructionMeta("0000000000001011", BranchOps.Rts             ,"rts", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("10001101dddddddd", BranchOps.Bts             ,"bts disp:8", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
+        Add(new InstructionMeta("1010dddddddddddd", BranchOps.Bra             ,"bra disp:12", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
+        Add(new InstructionMeta("0000nnnn00100011", BranchOps.Braf            ,"braf rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
+        Add(new InstructionMeta("1011dddddddddddd", BranchOps.Bsr             ,"bsr disp:12", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
+        Add(new InstructionMeta("0000nnnn00000011", BranchOps.Bsrf            ,"bsrf rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
+        Add(new InstructionMeta("0100nnnn00101011", BranchOps.Jmp             ,"jmp @rm", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
+        Add(new InstructionMeta("0100nnnn00001011", BranchOps.Jsr             ,"jsr @rn", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
+        Add(new InstructionMeta("0000000000001011", BranchOps.Rts             ,"rts", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
         Add(new InstructionMeta("0000000000101000", ArithmeticOps.ClrMac      ,"clrmac"));
         Add(new InstructionMeta("0000000001001000", FlagOps.ClrS              ,"clrs"));
         Add(new InstructionMeta("0000000000001000", FlagOps.ClrT              ,"clrt"));
@@ -199,12 +213,12 @@ public static class Sh4OpcodeTable
         Add(new InstructionMeta("0100mmmm00100110", ControlOps.LdsmPr         ,"lds.l @rn+, pr"));
         Add(new InstructionMeta("0000000000111000", UnknownOps.Unimplemented  ,"ldtlb"));
         Add(new InstructionMeta("0000nnnn11000011", UnknownOps.Unimplemented  ,"movca.l r0, @rn"));
-        Add(new InstructionMeta("0000000000001001", UnknownOps.Unimplemented  ,"nop"));
+        Add(new InstructionMeta("0000000000001001", ControlOps.Nop            ,"nop"));
         Add(new InstructionMeta("0000nnnn10010011", UnknownOps.Unimplemented  ,"ocbi"));
         Add(new InstructionMeta("0000nnnn10100011", UnknownOps.Unimplemented  ,"ocbp"));
         Add(new InstructionMeta("0000nnnn10110011", UnknownOps.Unimplemented  ,"ocbwb"));
         Add(new InstructionMeta("0000nnnn10000011", UnknownOps.Unimplemented  ,"pref @rn"));
-        Add(new InstructionMeta("0000000000101011", UnknownOps.Unimplemented  ,"rte", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAY_SLOT));
+        Add(new InstructionMeta("0000000000101011", UnknownOps.Unimplemented  ,"rte", OpcodeFlags.IS_BRANCH | OpcodeFlags.IS_DELAYED));
         Add(new InstructionMeta("0000000001011000", FlagOps.SetS              ,"sets"));
         Add(new InstructionMeta("0000000000011000", FlagOps.SetT              ,"sett"));
         Add(new InstructionMeta("0000000000011011", UnknownOps.Unimplemented  ,"sleep"));
@@ -292,6 +306,7 @@ public static class Sh4OpcodeTable
                     _lookupTable[opcode] = new Instruction()
                     {
                         Emit = instruction.Emit,
+                        Flags = instruction.Flags,
                     };
                     break;
                 }

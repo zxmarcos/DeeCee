@@ -223,4 +223,9 @@ public class Sh4EmitterContext : EmitterContext
         Debug.Assert(i < 8, "Invalid register index");
         return GetReg((byte)(i + (int)RegConstants.R0Bank));
     }
+
+    public void NextInstruction()
+    {
+        SetPC(Add(GetPC(), Constant(2)));
+    }
 }

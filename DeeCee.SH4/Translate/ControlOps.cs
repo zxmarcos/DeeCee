@@ -289,4 +289,9 @@ public class ControlOps
         var ea = ir.Memory(addr);
         ir.Store(ea, ir.GetPR());
     }
+
+    public static void Nop(Sh4EmitterContext ir)
+    {
+    }
+    
 }
