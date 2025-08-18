@@ -32,6 +32,13 @@ public class Sh4Translator
             var opcode = new Sh4Opcode(_memory.Read16(pc));
             // Console.WriteLine($"OpCode: {opcode.Value:X4} at {pc:X8}");
             var instr = Sh4OpcodeTable.GetInstruction(opcode.Value);
+            ctx.Op = opcode;
+
+            if (instr == null)
+            {
+                Console.WriteLine($"NULL Instr {opcode.Value}");
+                break;
+            }
             
             Console.WriteLine($"{pc:X8} {opcode.Value:X4} {_dasm.Disassemble(opcode.Value).FullInstruction}");
             
