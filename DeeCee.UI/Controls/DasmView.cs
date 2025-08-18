@@ -40,8 +40,18 @@ public class DasmView : UserControl
     private SolidColorBrush _dasmBgColor = new(Color.FromRgb(255, 255, 220));
     private SolidColorBrush _addressBgColor = new(Color.FromRgb(220, 255, 220));
 
-    public DasmResultDelegate? DasmCallback { get; set; }
-
+    private DasmResultDelegate? _dasmCallback;
+    public static readonly DirectProperty<DasmView, DasmResultDelegate?> DasmCallbackProperty =
+        AvaloniaProperty.RegisterDirect<DasmView, DasmResultDelegate?>(
+            nameof(DasmCallback),
+            o => o.DasmCallback,
+            (o, v) => o.DasmCallback = v);
+    public DasmResultDelegate? DasmCallback
+    {
+        get => _dasmCallback;
+        set => SetAndRaise(DasmCallbackProperty, ref _dasmCallback, value);
+    }
+    
     public DasmView()
     {
         Focusable = true;
@@ -240,10 +250,31 @@ public class DasmView : UserControl
     }
 
     public event EventHandler? NextLineRequested;
+    
+    // Propriedade bindável para MVVM: sincroniza com GotoAddress
+    public static readonly DirectProperty<DasmView, ulong> CurrentAddressProperty =
+        AvaloniaProperty.RegisterDirect<DasmView, ulong>(
+            nameof(CurrentAddress),
+            o => o.CurrentAddress,
+            (o, v) => o.CurrentAddress = v);
+
+    public ulong CurrentAddress
+    {
+        get => _currentAddr;
+        set
+        {
+            if (_currentAddr == value) return;
+            // Usa a navegação para manter o comportamento (scroll + redraw)
+            GotoAddress(value);
+        }
+    }
+
 
     public void GotoAddress(ulong addr)
     {
-        _currentAddr = addr;
+        // Atualiza o backing field e notifica o binding
+        SetAndRaise(CurrentAddressProperty, ref _currentAddr, addr);
+
         if (!_displayList.Contains(addr))
         {
             _vScroll.Value = addr;

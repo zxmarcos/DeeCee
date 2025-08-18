@@ -60,7 +60,6 @@ public unsafe class Interpreter
         switch((Sh4EmitterContext.RegConstants)regNum)
         {
             case Sh4EmitterContext.RegConstants.PC: _state->PC = val;
-                // Console.WriteLine($"$PC <= {val:X8}");
                 return;
             case Sh4EmitterContext.RegConstants.SR: _state->SR = val;
                 return;
