@@ -194,7 +194,7 @@ public class Memory : IMemory
         }
 
         var ptr = map[address >> PageShift].ToPointer();
-        return *((UInt16*)ptr + (address & PageMask));
+        return *((UInt16*)((byte*)ptr + (address & PageMask)));
     }
 
     public unsafe UInt32 Read32(UInt32 address)
@@ -210,7 +210,7 @@ public class Memory : IMemory
         }
 
         var ptr = map[address >> PageShift].ToPointer();
-        return *((UInt32*)ptr + (address & PageMask));
+        return *((UInt32*)((byte*)ptr + (address & PageMask)));
     }
 
     public unsafe UInt64 Read64(UInt32 address)
@@ -226,7 +226,7 @@ public class Memory : IMemory
         }
 
         var ptr = map[address >> PageShift].ToPointer();
-        return *((UInt64*)ptr + (address & PageMask));
+        return *((UInt64*)((byte*)ptr + (address & PageMask)));
     }
 
     public unsafe void Write8(UInt32 address, byte value)
@@ -258,7 +258,7 @@ public class Memory : IMemory
         }
 
         var ptr = map[address >> PageShift].ToPointer();
-        *((UInt16*)ptr + (address & PageMask)) = value;
+        *((UInt16*)((byte*)ptr + (address & PageMask))) = value;
     }
 
     public unsafe void Write32(UInt32 address, UInt32 value)
@@ -274,7 +274,7 @@ public class Memory : IMemory
         }
 
         var ptr = map[address >> PageShift].ToPointer();
-        *((UInt32*)ptr + (address & PageMask)) = value;
+        *((UInt32*)((byte*)ptr + (address & PageMask))) = value;
     }
 
     public unsafe void Write64(UInt32 address, UInt64 value)
@@ -290,6 +290,6 @@ public class Memory : IMemory
         }
 
         var ptr = map[address >> PageShift].ToPointer();
-        *((UInt64*)ptr + (address & PageMask)) = value;
+        *((UInt64*)((byte*)ptr + (address & PageMask))) = value;
     }
 }
