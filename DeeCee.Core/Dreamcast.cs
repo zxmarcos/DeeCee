@@ -112,13 +112,25 @@ public unsafe class Dreamcast : IDisposable
         Console.WriteLine("Modo debug: comandos - s (step), r (registradores), q (sair)");
 
         bool showIr = false;
+        String lastCmd = "";
         while (true)
         {
+            Console.Write($"{Sh4State->PC:X8} ");;
             Console.Write("(debug) > ");
+            if (lastCmd != "")
+            {
+                Console.Write($"[{lastCmd}] ");
+            }
             var cmd = Console.ReadLine();
             if (cmd == null) continue;
             cmd = cmd.Trim().ToLowerInvariant();
 
+            if (cmd == "")
+            {
+                cmd = lastCmd;
+            }
+            lastCmd = cmd;
+            
             if (cmd == "q")
             {
                 break;
