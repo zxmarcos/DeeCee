@@ -32,6 +32,30 @@ public unsafe class Dreamcast : IDisposable
             Mem.MapMemory(FlashRom.Ptr, baseAddr + 0x0020_0000, baseAddr + 0x0023_FFFF, Memory.MapType.ReadWrite);
             Mem.MapMemory(Ram.Ptr,      baseAddr + 0x0C00_0000, baseAddr + 0x0CFF_FFFF, Memory.MapType.ReadWrite);
         }
+        
+        // Control Registers
+        Mem.MapRead32Handler(1, 0xFC00_0000, 0xFFFF_FFFF); 
+        Mem.SetRead32Handler(1, (addr) =>
+        {
+            if (addr == 0xFF80_0028)
+            {
+                Console.WriteLine("Read RFCR");
+                return (uint)Random.Shared.Next(0, 0x20);
+            }
+
+            return 0u;
+        });
+        Mem.MapRead16Handler(1, 0xFC00_0000, 0xFFFF_FFFF); 
+        Mem.SetRead16Handler(1, (addr) =>
+        {
+            if (addr == 0xFF80_0028)
+            {
+                Console.WriteLine("Read RFCR");
+                return (ushort)Random.Shared.Next(0, 0x20);
+            }
+
+            return 0;
+        });
    
         Rom.LoadFrom(@"D:\dev\DeeCee\Data\dc_boot.bin");
         FlashRom.LoadFrom(@"D:\dev\DeeCee\Data\dc_flash.bin");

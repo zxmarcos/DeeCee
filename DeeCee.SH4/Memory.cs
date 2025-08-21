@@ -17,21 +17,21 @@ public class Memory : IMemory
         ReadWrite = Read | Write
     }
 
-    private delegate byte MemoryRead8Handler(UInt32 address);
+    public delegate byte MemoryRead8Handler(UInt32 address);
 
-    private delegate UInt16 MemoryRead16Handler(UInt32 address);
+    public delegate UInt16 MemoryRead16Handler(UInt32 address);
 
-    private delegate UInt32 MemoryRead32Handler(UInt32 address);
+    public delegate UInt32 MemoryRead32Handler(UInt32 address);
 
-    private delegate UInt64 MemoryRead64Handler(UInt32 address);
+    public delegate UInt64 MemoryRead64Handler(UInt32 address);
 
-    private delegate void MemoryWrite8Handler(UInt32 address, byte value);
+    public delegate void MemoryWrite8Handler(UInt32 address, byte value);
 
-    private delegate void MemoryWrite16Handler(UInt32 address, UInt16 value);
+    public delegate void MemoryWrite16Handler(UInt32 address, UInt16 value);
 
-    private delegate void MemoryWrite32Handler(UInt32 address, UInt32 value);
+    public delegate void MemoryWrite32Handler(UInt32 address, UInt32 value);
 
-    private delegate void MemoryWrite64Handler(UInt32 address, UInt64 value);
+    public delegate void MemoryWrite64Handler(UInt32 address, UInt64 value);
 
     private const int ReadMap8 = 0;
     private const int ReadMap16 = 1;
@@ -118,6 +118,52 @@ public class Memory : IMemory
 
         return 0; // Sucesso
     }
+
+    public void SetRead16Handler(uint handlerIdx, MemoryRead16Handler handler)
+    {
+        _read16[handlerIdx] = handler;
+    }
+    public void SetRead32Handler(uint handlerIdx, MemoryRead32Handler handler)
+    {
+        _read32[handlerIdx] = handler;
+    }
+    
+    private unsafe int MapHandler(uint handlerType, uint handlerIdx, UInt32 startAddress, UInt32 endAddress)
+    {
+        if (handlerIdx >= MaxHandler)
+            return -1;
+        if (startAddress > endAddress)
+            return -1;
+
+        // Calcula a página inicial e final
+        var startPage = startAddress >> PageShift;
+        var endPage = endAddress >> PageShift;
+        var maxPages = (endPage - startPage) + 1;
+
+        // Ponteiro base da memória
+        var basePtr = new UIntPtr(handlerIdx);
+ 
+        // Mapeia as páginas
+        for (UInt32 i = 0; i < maxPages; i++)
+        {
+            var currentPage = startPage + i;
+            _memoryMap[handlerType][currentPage] = basePtr;
+        }
+
+        return 0; // Sucesso
+    }
+    
+    public unsafe int MapRead16Handler(uint handlerIdx, UInt32 startAddress, UInt32 endAddress)
+    {
+        return MapHandler(ReadMap16, handlerIdx, startAddress, endAddress);
+    }
+    
+    public unsafe int MapRead32Handler(uint handlerIdx, UInt32 startAddress, UInt32 endAddress)
+    {
+        return MapHandler(ReadMap32, handlerIdx, startAddress, endAddress);
+    }
+    
+
 
     // Método sobrecarregado para aceitar IntPtr (mais comum em C#)
     public int MapMemory(IntPtr pMemory, UInt32 startAddress, UInt32 endAddress, MapType mapType)
