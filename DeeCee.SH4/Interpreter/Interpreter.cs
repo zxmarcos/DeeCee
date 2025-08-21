@@ -500,7 +500,6 @@ public unsafe class Interpreter
     {
         Debug.Assert(instruction.Destiny != null, "instruction.Destiny != null");
         var address = GetValue(instruction.A.Address).AsUInt32();
-        Console.WriteLine($"************ LoadMemory {instruction.A.MemoryWidth} 0x{address:X8}");
         switch (instruction.A.MemoryWidth)
         {
             case MemoryWidth.Byte:
@@ -532,7 +531,6 @@ public unsafe class Interpreter
         {
             case OperandKind.Memory:
                 var address = GetValue(instruction.Destiny.Address).AsUInt32();
-                Console.WriteLine($"************ StoreMemory {instruction.Destiny.MemoryWidth} 0x{address:X8}");
                 switch (instruction.Destiny.MemoryWidth)
                 {
                     case MemoryWidth.Byte:
