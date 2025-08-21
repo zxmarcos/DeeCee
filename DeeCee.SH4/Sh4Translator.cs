@@ -40,7 +40,7 @@ public class Sh4Translator
                 break;
             }
             
-            Console.WriteLine($"{pc:X8} {opcode.Value:X4} {_dasm.Disassemble(opcode.Value).FullInstruction}");
+            Console.WriteLine($"{pc:X8} {opcode.Value:X4} {_dasm.DisassembleWithAddresses([opcode.Value], pc)[0].FullInstruction}");
             
             
             if (instr.IsBranch())
@@ -50,10 +50,17 @@ public class Sh4Translator
                     var delaySlot = new Sh4Opcode(_memory.Read16(pc + 2));
                     var delayInstr = Sh4OpcodeTable.GetInstruction(delaySlot.Value);
                     Debug.Assert(!delayInstr.IsBranch());
-
+                    
+                    pc += 2;
+                    Console.WriteLine($"{pc:X8} {opcode.Value:X4} {_dasm.Disassemble(opcode.Value).FullInstruction} *DELAY_SLOT");
+                    ctx.Op = delaySlot;
                     delayInstr.Emit(ctx);
+                    ctx.NextInstruction();
+                    ctx.Op = opcode;
                 }
-                
+                instr.Emit(ctx);
+                ctx.NextInstruction();
+                pc += 2;
                 break;
             }
             
