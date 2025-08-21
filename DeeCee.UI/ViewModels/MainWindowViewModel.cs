@@ -28,8 +28,8 @@ public partial class MainWindowViewModel : ViewModelBase
     private (string text, int size) Dasm(ulong address)
     {
         var op = Emulator.Mem.Read16(unchecked((uint)address));
-        var dasm = Emulator.Sh4Dasm.Disassemble(op);
-        return (dasm.FullInstruction, 2);
+        var dasm = Emulator.Sh4Dasm.DisassembleWithAddresses([op], unchecked((uint)address));
+        return (dasm[0].FullInstruction, 2);
     }
     
     public DasmView.DasmResultDelegate DasmCallback => Dasm;
