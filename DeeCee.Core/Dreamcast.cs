@@ -1,6 +1,7 @@
 ﻿using System.Runtime.InteropServices;
 using DeeCee.SH4;
 using DeeCee.SH4.Interpreter;
+using DeeCee.SH4.JIT;
 
 namespace DeeCee.Core;
 
@@ -160,13 +161,35 @@ public unsafe class Dreamcast : IDisposable
             }
             else if (cmd == "s")
             {
-                Console.WriteLine($"------------------> Next PC {Sh4State->PC:X8}\n");
                 var block = _sh4Translator.GetBlock(Sh4State->PC, true);
                 try
                 {
                     if (showIr)
                     {
                         Console.WriteLine($"IR_BEGIN:\n{block}IR_END\n");
+
+                        var livenessAnalyzer = new LivenessAnalysis(block);
+                        livenessAnalyzer.Analyze();
+                        Console.WriteLine(livenessAnalyzer);
+                    }
+                    _sh4Interpreter.Execute(block);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+            else if (cmd == "x")
+            {
+                var block = _sh4Translator.GetBlock(Sh4State->PC, false);
+                try
+                {
+                    if (showIr)
+                    {
+                        Console.WriteLine($"IR_BEGIN:\n{block}IR_END\n");
+                        var livenessAnalyzer = new LivenessAnalysis(block);
+                        livenessAnalyzer.Analyze();
+                        Console.WriteLine(livenessAnalyzer);
                     }
                     _sh4Interpreter.Execute(block);
                 }
