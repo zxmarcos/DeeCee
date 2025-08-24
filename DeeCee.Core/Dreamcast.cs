@@ -159,6 +159,27 @@ public unsafe class Dreamcast : IDisposable
                     Console.WriteLine(e);
                 }
             }
+            else if (cmd == "b")
+            {
+                Sh4State->PC = Sh4State->PC - 2;
+                Console.WriteLine($"PC set to {Sh4State->PC:X8}");
+            }
+            else if (cmd.StartsWith("d"))
+            {
+      
+                var n = cmd.Substring(1);
+                var res = uint.TryParse(n, out var ni);
+                if (!res)
+                    ni = 1;
+                
+                for (int i = 0; i < ni; i++)
+                {
+                    var pc = (uint)(Sh4State->PC + i * 2);
+                    var opcode = new Sh4Opcode(_sh4Interpreter.Memory.Read16(pc));
+                    Console.WriteLine($"{pc:X8} {opcode.Value:X4} {_sh4Translator.Dasm.DisassembleWithAddresses([opcode.Value], pc)[0].FullInstruction}");
+
+                }
+            }
             else if (cmd == "s")
             {
                 var block = _sh4Translator.GetBlock(Sh4State->PC, true);
