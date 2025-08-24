@@ -22,6 +22,7 @@ public static class Sh4OpcodeTable
         {
             Pattern = pattern;
             Emit = emit;
+            Flags = flags;
         }
     }
 
