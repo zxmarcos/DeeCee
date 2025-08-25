@@ -1,5 +1,6 @@
 ﻿using System.Diagnostics;
 using DeeCee.SH4.Translate;
+using Microsoft.VisualBasic.CompilerServices;
 
 namespace DeeCee.SH4;
 
@@ -45,7 +46,7 @@ public class Sh4Translator
     public BasicBlock GetBlock(uint pc, bool singleStep = false)
     {
         var blockPc = pc;
-        if (Blocks.TryGetValue(pc, out var block))
+        if (Blocks.TryGetValue(pc, out var block) && !singleStep)
         {
             return block;
         }
@@ -75,27 +76,23 @@ public class Sh4Translator
             
             if (instr.IsBranch())
             {
+                instr.Emit(ctx);
+                pc += 2;
+                
                 if (instr.IsDelayed())
                 {
-                    Console.WriteLine($"DELAYED {pc:X8}");
-                    var delaySlot = new Sh4Opcode(_memory.Read16(pc + 2));
+                    // Console.WriteLine($"DELAYED {pc:X8}");
+                    var delaySlot = new Sh4Opcode(_memory.Read16(pc));
                     var delayInstr = Sh4OpcodeTable.GetInstruction(delaySlot.Value);
                     Debug.Assert(!delayInstr.IsBranch());
                     
                     pc += 2;
-                    Console.WriteLine($"{pc:X8} {opcode.Value:X4} {Dasm.Disassemble(delaySlot.Value).FullInstruction} *DELAY_SLOT");
                     ctx.Op = delaySlot;
+                    Console.WriteLine($"{pc:X8} {delaySlot.Value:X4} {Dasm.Disassemble(delaySlot.Value).FullInstruction} *DELAY_SLOT");
                     delayInstr.Emit(ctx);
                     ctx.NextInstruction();
                     ctx.Op = opcode;
                 }
-                else
-                {
-                    Console.WriteLine($"NO_DELAYED {pc:X8}");
-                }
-                instr.Emit(ctx);
-                // O próximo PC é computado diretamente na função.
-                pc += 2;
                 break;
             }
             

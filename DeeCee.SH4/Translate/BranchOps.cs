@@ -38,7 +38,7 @@ public class BranchOps
         ir.If(ir.IsZero(ir.GetT()), () =>
         {
             // PC = PC+4 + disp*2
-            var tmp = ir.Add(ir.GetPC(), ir.Constant(2));
+            var tmp = ir.Add(ir.GetPC(), ir.Constant(4));
             ir.SetPC(ir.Add(tmp, ir.Constant(ir.Op.SImm32() * 2)));
         }, () => AdvancePC(ir));
         // TODO: Delay slot
@@ -49,7 +49,7 @@ public class BranchOps
         ir.If(ir.GetT(), () =>
         {
             // PC = PC+4 + disp*2
-            var tmp = ir.Add(ir.GetPC(), ir.Constant(2));
+            var tmp = ir.Add(ir.GetPC(), ir.Constant(4));
             ir.SetPC(ir.Add(tmp, ir.Constant(ir.Op.SImm32() * 2)));
         }, () => AdvancePC(ir));
         // TODO: Delay slot
@@ -93,7 +93,7 @@ public class BranchOps
     {
         var nReg = ir.GetReg(ir.Op.N());
         // PC = PC+4 + Rn
-        var tmp = ir.Add(ir.GetPC(), ir.Constant(2));
+        var tmp = ir.Add(ir.GetPC(), ir.Constant(4));
         ir.SetPR(tmp);
         ir.SetPC(ir.Add(tmp, nReg));
     }
@@ -107,7 +107,7 @@ public class BranchOps
     public static void Jsr(Sh4EmitterContext ir)
     {
         var nReg = ir.GetReg(ir.Op.N());
-        ir.SetPR(ir.Add(ir.GetPC(), ir.Constant(2)));
+        ir.SetPR(ir.Add(ir.GetPC(), ir.Constant(4)));
         ir.SetPC(nReg);
     }
     
