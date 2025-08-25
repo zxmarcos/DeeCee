@@ -214,7 +214,7 @@ public class Memory : IMemory
     public unsafe byte Read8(UInt32 address)
     {
         var map = _memoryMap[ReadMap8];
-        var idx = map[address >> PageShift].ToUInt32();
+        var idx = map[address >> PageShift].ToUInt64();
         if (idx < MaxHandler)
         {
             if (_read8[idx] != null)
