@@ -1,5 +1,18 @@
-﻿namespace DeeCee.SH4;
+﻿using System.Runtime.InteropServices;
 
+namespace DeeCee.SH4;
+
+
+[StructLayout(LayoutKind.Explicit)]
+public unsafe struct Sh4FpRegs
+{
+    [FieldOffset(0)]
+    public fixed float F[32];
+    [FieldOffset(0)]
+    public fixed double D[16];
+}
+
+[StructLayout(LayoutKind.Sequential, Pack = 1)]
 public unsafe struct Sh4CpuState
 {
     public fixed UInt32 R[16];
@@ -17,6 +30,16 @@ public unsafe struct Sh4CpuState
     public UInt32 DBR;
     public UInt32 MACH;
     public UInt32 MACL;
+    
+    // FPU
+    public UInt32 FPSCR;
+    public Sh4FpRegs FR;
+
+    public void Reset()
+    {
+        PC = 0xA0000000;
+        FPSCR = 0x00040001;
+    }
 
 
     public bool T
@@ -69,6 +92,8 @@ public unsafe struct Sh4CpuState
 
         // Flags (derivados de SR)
         sb.AppendFormat("FLAGS: T={0} S={1} Q={2} M={3}\n", T ? 1 : 0, S ? 1 : 0, Q ? 1 : 0, M ? 1 : 0);
+        
+        sb.AppendFormat("FPSCR={0:X8}\n", FPSCR);
 
         return sb.ToString();
     }

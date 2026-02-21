@@ -90,7 +90,7 @@ public class Sh4Translator
                     ctx.Op = delaySlot;
                     Console.WriteLine($"{pc:X8} {delaySlot.Value:X4} {Dasm.Disassemble(delaySlot.Value).FullInstruction} *DELAY_SLOT");
                     delayInstr.Emit(ctx);
-                    ctx.NextInstruction();
+                    // ctx.NextInstruction();
                     ctx.Op = opcode;
                 }
                 break;

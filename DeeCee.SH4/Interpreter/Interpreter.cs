@@ -17,27 +17,28 @@ public unsafe class Interpreter
 
     InterpValue GetReg(byte regNum)
     {
-        if (regNum < 16)
-            return InterpValue.FromUInt64(_state->R[regNum]);
-        if (regNum < (byte)Sh4EmitterContext.RegConstants.RnBank)
+        return regNum switch
         {
-            return InterpValue.FromUInt64(_state->RBank[regNum - 16]);
-        }
-
-        return (Sh4EmitterContext.RegConstants)regNum switch
-        {
-            Sh4EmitterContext.RegConstants.PC => InterpValue.FromUInt64(_state->PC),
-            Sh4EmitterContext.RegConstants.SR => InterpValue.FromUInt64(_state->SR),
-            Sh4EmitterContext.RegConstants.GBR => InterpValue.FromUInt64(_state->GBR),
-            Sh4EmitterContext.RegConstants.PR => InterpValue.FromUInt64(_state->PR),
-            Sh4EmitterContext.RegConstants.SSR => InterpValue.FromUInt64(_state->SSR),
-            Sh4EmitterContext.RegConstants.SPC => InterpValue.FromUInt64(_state->SPC),
-            Sh4EmitterContext.RegConstants.VBR => InterpValue.FromUInt64(_state->VBR),
-            Sh4EmitterContext.RegConstants.SGR => InterpValue.FromUInt64(_state->SGR),
-            Sh4EmitterContext.RegConstants.DBR => InterpValue.FromUInt64(_state->DBR),
-            Sh4EmitterContext.RegConstants.MACH => InterpValue.FromUInt64(_state->MACH),
-            Sh4EmitterContext.RegConstants.MACL => InterpValue.FromUInt64(_state->MACL),
-            _ => throw new ArgumentOutOfRangeException(nameof(regNum), regNum, null)
+            < 16 => InterpValue.FromUInt64(_state->R[regNum]),
+            < (byte)Sh4EmitterContext.RegConstants.RnBank => InterpValue.FromUInt64(_state->RBank[regNum - 16]),
+            <= (byte)Sh4EmitterContext.RegConstants.FR15_Bank1 and >= (byte)Sh4EmitterContext.RegConstants.FR0_Bank0 =>
+                InterpValue.FromFloat(_state->FR.F[(int)(regNum - Sh4EmitterContext.RegConstants.FR0_Bank0)]),
+            _ => (Sh4EmitterContext.RegConstants)regNum switch
+            {
+                Sh4EmitterContext.RegConstants.PC => InterpValue.FromUInt64(_state->PC),
+                Sh4EmitterContext.RegConstants.SR => InterpValue.FromUInt64(_state->SR),
+                Sh4EmitterContext.RegConstants.GBR => InterpValue.FromUInt64(_state->GBR),
+                Sh4EmitterContext.RegConstants.PR => InterpValue.FromUInt64(_state->PR),
+                Sh4EmitterContext.RegConstants.SSR => InterpValue.FromUInt64(_state->SSR),
+                Sh4EmitterContext.RegConstants.SPC => InterpValue.FromUInt64(_state->SPC),
+                Sh4EmitterContext.RegConstants.VBR => InterpValue.FromUInt64(_state->VBR),
+                Sh4EmitterContext.RegConstants.SGR => InterpValue.FromUInt64(_state->SGR),
+                Sh4EmitterContext.RegConstants.DBR => InterpValue.FromUInt64(_state->DBR),
+                Sh4EmitterContext.RegConstants.MACH => InterpValue.FromUInt64(_state->MACH),
+                Sh4EmitterContext.RegConstants.MACL => InterpValue.FromUInt64(_state->MACL),
+                Sh4EmitterContext.RegConstants.FPSCR => InterpValue.FromUInt64(_state->FPSCR),
+                _ => throw new ArgumentOutOfRangeException(nameof(regNum), regNum, null)
+            }
         };
     }
     
@@ -55,8 +56,15 @@ public unsafe class Interpreter
         if (regNum < (byte)Sh4EmitterContext.RegConstants.RnBank)
         {
             _state->RBank[regNum - 16] = val;
+            return;
         }
 
+        if (regNum is <= (byte)Sh4EmitterContext.RegConstants.FR15_Bank1 and >= (byte)Sh4EmitterContext.RegConstants.FR0_Bank0)
+        {
+            _state->FR.F[(int)(regNum - Sh4EmitterContext.RegConstants.FR0_Bank0)] = val;
+            return;
+        }
+        
         switch((Sh4EmitterContext.RegConstants)regNum)
         {
             case Sh4EmitterContext.RegConstants.PC: _state->PC = val;
@@ -80,6 +88,8 @@ public unsafe class Interpreter
             case Sh4EmitterContext.RegConstants.MACH: _state->MACH = val;
                 return;
             case Sh4EmitterContext.RegConstants.MACL: _state->MACL = val;
+                return;
+            case Sh4EmitterContext.RegConstants.FPSCR: _state->FPSCR = val;
                 return;
             default:
                 throw new ArgumentOutOfRangeException(nameof(regNum), regNum, null);

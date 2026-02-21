@@ -1,4 +1,5 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
 using DeeCee.SH4;
 using DeeCee.SH4.Interpreter;
 using DeeCee.SH4.JIT;
@@ -72,7 +73,9 @@ public unsafe class Dreamcast : IDisposable
             Memory = Mem
         };
 
-        Sh4State->PC = 0xA0000000;
+        Sh4State->Reset();
+        
+        _sh4Translator.AddBreakpoint(0x0000B860);
 
     }
 
@@ -175,6 +178,10 @@ public unsafe class Dreamcast : IDisposable
                 Sh4State->PC = Sh4State->PC - 2;
                 Console.WriteLine($"PC set to {Sh4State->PC:X8}");
             }
+            else if (cmd == "break")
+            {
+                Debugger.Break();
+            }
             else if (cmd.StartsWith("d"))
             {
       
@@ -246,6 +253,7 @@ public unsafe class Dreamcast : IDisposable
 
                 var execTask = System.Threading.Tasks.Task.Run(() =>
                 {
+                    uint lastPc = 0;
                     while (!token.IsCancellationRequested)
                     {
                         try
@@ -253,6 +261,11 @@ public unsafe class Dreamcast : IDisposable
                             var block = _sh4Translator.GetBlock(Sh4State->PC, false);
                             // Evite logar IR em modo contínuo para não poluir a saída
                             _sh4Interpreter.Execute(block);
+                            if (Sh4State->PC != lastPc)
+                            {
+                                Console.WriteLine("* PC: $" + Sh4State->PC.ToString("X8") + "");
+                            }
+                            lastPc = Sh4State->PC;
                         }
                         catch (NotImplementedException e)
                         {

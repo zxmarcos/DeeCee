@@ -272,7 +272,7 @@ public static class Sh4OpcodeTable
         Add(new InstructionMeta("1111mmmm00111101", UnknownOps.Unimplemented  ,"ftrc frn, fpul"));
         Add(new InstructionMeta("1111mmmm10111101", UnknownOps.Unimplemented  ,"fcnvds drn, fpul"));
         Add(new InstructionMeta("1111nnnn10101101", UnknownOps.Unimplemented  ,"fcnvsd fpul, drn"));
-        Add(new InstructionMeta("0100mmmm01101010", UnknownOps.Unimplemented  ,"lds rn, fpscr"));
+        Add(new InstructionMeta("0100mmmm01101010", FloatOps.LdsFpscr         ,"lds rn, fpscr"));
         Add(new InstructionMeta("0100mmmm01011010", UnknownOps.Unimplemented  ,"lds rn, fpul"));
         Add(new InstructionMeta("0100mmmm01100110", UnknownOps.Unimplemented  ,"lds.l @rn+, fpscr"));
         Add(new InstructionMeta("0100mmmm01010110", UnknownOps.Unimplemented  ,"lds.l @rn+, fpul"));

@@ -10,6 +10,40 @@ public class Sh4EmitterContext : EmitterContext
     {
         R0Bank = 16,
         RnBank = R0Bank + 7,
+        // Float registers
+        FR0_Bank0,
+        FR1_Bank0,
+        FR2_Bank0,
+        FR3_Bank0,
+        FR4_Bank0,
+        FR5_Bank0,
+        FR6_Bank0,
+        FR7_Bank0,
+        FR8_Bank0,
+        FR9_Bank0,
+        FR10_Bank0,
+        FR11_Bank0,
+        FR12_Bank0,
+        FR13_Bank0,
+        FR14_Bank0,
+        FR15_Bank0,
+        FR0_Bank1,
+        FR1_Bank1,
+        FR2_Bank1,
+        FR3_Bank1,
+        FR4_Bank1,
+        FR5_Bank1,
+        FR6_Bank1,
+        FR7_Bank1,
+        FR8_Bank1,
+        FR9_Bank1,
+        FR10_Bank1,
+        FR11_Bank1,
+        FR12_Bank1,
+        FR13_Bank1,
+        FR14_Bank1,
+        FR15_Bank1,
+
         PC,
         SR,
         GBR,
@@ -21,6 +55,7 @@ public class Sh4EmitterContext : EmitterContext
         DBR,
         MACH,
         MACL,
+        FPSCR
     };
     
     public Operand GetT()
@@ -88,6 +123,18 @@ public class Sh4EmitterContext : EmitterContext
     public void SetZero(Operand op)
     {
         Store(op, Constant(0));
+    }
+
+    public void SetFReg(byte i, Operand value)
+    {
+        Debug.Assert(i < 32, "Invalid register index");
+        SetReg((byte)(i + (int)RegConstants.FR0_Bank0), value);
+    }
+    
+    public Operand GetFReg(byte i)
+    {
+        Debug.Assert(i < 32, "Invalid register index");
+        return GetReg((byte)(i + (int)RegConstants.FR0_Bank0));
     }
     
     
@@ -223,9 +270,22 @@ public class Sh4EmitterContext : EmitterContext
         Debug.Assert(i < 8, "Invalid register index");
         return GetReg((byte)(i + (int)RegConstants.R0Bank));
     }
+    
+    
+    // --- FPSCR ---
+    public void SetFPSCR(Operand value)
+    {
+        SetReg((byte)RegConstants.FPSCR, And(value, Constant(0x003FFFFFu)));
+    }
+
+    public Operand GetFPSCR()
+    {
+        return GetReg((byte)RegConstants.FPSCR);
+    }
 
     public void NextInstruction()
     {
         SetPC(Add(GetPC(), Constant(2)));
     }
+    
 }
