@@ -17,7 +17,7 @@ public class LivenessAnalysis
         public int End;
     }
 
-    private Dictionary<int, Range> Ranges { get; } = new();
+    public Dictionary<int, Range> Ranges { get; } = new();
 
     public LivenessAnalysis(BasicBlock block)
     {
