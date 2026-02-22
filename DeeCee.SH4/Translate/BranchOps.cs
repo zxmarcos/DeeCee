@@ -63,7 +63,7 @@ public class BranchOps
         {
             disp = (int)((UInt32)disp | 0xFFFF_F000u);
         }
-        var tmp = ir.Add(ir.GetPC(), ir.Constant(2));
+        var tmp = ir.Add(ir.GetPC(), ir.Constant(4));
         ir.SetPC(ir.Add(tmp, ir.Constant(disp * 2)));
     }
     
@@ -71,7 +71,7 @@ public class BranchOps
     {
         var nReg = ir.GetReg(ir.Op.N());
         // PC = PC+4 + Rn
-        var tmp = ir.Add(ir.GetPC(), ir.Constant(2));
+        var tmp = ir.Add(ir.GetPC(), ir.Constant(4));
         ir.SetPC(ir.Add(tmp, nReg));
     }
     
@@ -83,7 +83,7 @@ public class BranchOps
         {
             disp = (int)((UInt32)disp | 0xFFFF_F000u);
         }
-        var tmp = ir.Add(ir.GetPC(), ir.Constant(2));
+        var tmp = ir.Add(ir.GetPC(), ir.Constant(4));
         // PR = PC + 4
         ir.SetPR(tmp);
         ir.SetPC(ir.Add(tmp, ir.Constant(disp * 2)));
