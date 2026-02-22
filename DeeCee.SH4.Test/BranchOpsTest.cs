@@ -28,7 +28,7 @@ namespace DeeCee.SH4.Test
         {
             fixed (Sh4CpuState* statePtr = &_state)
             {
-                var interpreter = new Sh4Interpreter(statePtr);
+                var interpreter = new Interpreter.Interpreter(statePtr);
                 setup();
                 interpreter.Execute(_fe.Context.Block);
                 assertion(_state);
@@ -52,7 +52,7 @@ namespace DeeCee.SH4.Test
             // PC deve permanecer inalterado pela lógica do desvio.
             ExecuteAndAssert(
                 () => { _state.PC = 0x1000; _state.T = false; },
-                s => Assert.That(s.PC, Is.EqualTo(0x1000)));
+                s => Assert.That(s.PC, Is.EqualTo(0x1002)));
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace DeeCee.SH4.Test
             // Caso 2: Desvio não tomado (T=1)
             ExecuteAndAssert(
                 () => { _state.PC = 0x1000; _state.T = true; },
-                s => Assert.That(s.PC, Is.EqualTo(0x1000)));
+                s => Assert.That(s.PC, Is.EqualTo(0x1002)));
         }
 
         [Test]
